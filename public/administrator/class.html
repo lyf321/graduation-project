@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js" type="text/javascript"></script>
+
+    <link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <title>class</title>
+</head>
+<style>
+    body {
+        font-family: 'lato' !important;
+        background-color: white;
+    }
+
+    /*navbar start*/
+
+    @media (min-width: 768px) {
+
+        body {
+            margin-top: 50px;
+        }
+    }
+
+    #wrapper {
+        padding-left: 0;
+    }
+
+    #page-wrapper {
+        width: 100%;
+        padding: 0;
+    }
+
+    /* Side Navigation */
+
+    @media (min-width: 768px) {
+
+        #wrapper {
+            padding-left: 225px;
+        }
+
+        #page-wrapper {
+            padding: 2px 10px;
+        }
+
+        .side-nav {
+            position: fixed;
+            top: -21px;
+            left: 225px;
+            width: 225px;
+            margin-left: -225px;
+            border: none;
+            border-radius: 0;
+            overflow-y: auto;
+            background-color: #313131;
+            bottom: 0;
+            overflow-x: hidden;
+            padding-bottom: 40px;
+            margin-top: 20px;
+        }
+
+        .side-nav > li > a {
+            width: 225px;
+            border-bottom: 1px solid #6C7278;
+            margin-top: 15px;
+        }
+    }
+
+    .navbar-inverse .navbar-collapse, .navbar-inverse .navbar-form {
+        border-color: #616060 !important;
+    }
+
+    .navbar-ex1-collapse {
+        background-color: #fff;
+    }
+
+    .logostyle {
+        width: 50%;
+        max-width: 186px;
+        margin-top: 10px;
+        margin-left: 55px;
+    }
+
+    .navbar-inverse .navbar-nav > li > .active {
+        border-left: 3px solid white;
+    }
+
+    .nav > li > a {
+        position: relative;
+        display: block;
+        padding: 12px 15px;
+        margin-right: 15px;
+    }
+
+    .nav .open > a, .nav .open > a:focus, .nav .open > a:hover {
+        background-color: transparent;
+        border-color: white;
+    }
+
+    a {
+        color: white !important;
+        text-decoration: none;
+    }
+
+    .form-control-serch {
+        height: 32px;
+        padding: 0px 12px;
+        font-size: 14px;
+        line-height: 1.42857143;
+        color: #555;
+        background-color: #fff;
+        background-image: none;
+        border: 1px solid #ccc;
+        border-radius: 0px 22px 22px 0px;
+        box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+        transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+    }
+
+    .search-btn-icon {
+        background-color: #fff;
+        border: 1px solid #E8E8E8;
+        border-right: transparent !important;
+        border-top-left-radius: 30px;
+        border-bottom-left-radius: 30px;
+        height: 32px;
+        margin-left: 200px;
+    }
+
+    .search-box {
+        border-left: transparent !important;
+        border-top-right-radius: 30px;
+        border-bottom-right-radius: 30px;
+        border: 1px solid #E8E8E8;
+        height: 32px;
+    }
+
+    .fasett {
+        display: inline-block;
+        font: normal normal normal 14px/1 FontAwesome;
+        font-size: 25px;
+        text-rendering: auto;
+        color: white;
+        margin-top: 10px;
+        margin-right: 30px;
+        cursor: pointer;
+    }
+
+    a:hover {
+        background-color: transparent !important;
+    }
+
+    .editpro h5 {
+        margin-right: 15px;
+        margin-top: 15px;
+        color: white;
+    }
+
+    /*navbar end*/
+    @media screen and (max-device-width: 640px) {
+
+        .search-btn-icon {
+            background-color: #fff;
+            border: 1px solid #E8E8E8;
+            border-right: transparent !important;
+            border-top-left-radius: 30px;
+            border-bottom-left-radius: 30px;
+            height: 32px;
+            margin-left: 115px;
+        }
+
+        .editpro h5 {
+            margin-right: 12px;
+            margin-top: 15px;
+            color: white;
+            margin-left: 158px;
+        }
+
+        .dashhead h1 {
+            margin-top: 180px;
+        }
+    }
+</style>
+<script type="text/javascript">
+    var courses;
+    window.onload = function () {
+        $.ajax({
+            url: 'http://localhost:3000/course/getAll',
+            type: 'get',
+            datatype: 'jsonp',
+            crossDomain: true,
+            success: function (data, status, xhr) {
+                courses = data;
+                if (status === "success") {
+                    var tb = document.getElementById("mytable");
+                    for (var i = 0; i < data.result.length; i++) {
+                        var tr = tb.insertRow();
+                        tr.setAttribute("id", i);
+                        var td1 = tr.insertCell(0);
+                        var td2 = tr.insertCell(1);
+                        var td3 = tr.insertCell(2);
+                        var td4 = tr.insertCell(3);
+                        var td5 = tr.insertCell(4);
+                        td1.innerText = data.result[i].cid;
+                        td2.innerText = data.result[i].cname;
+                        td3.innerText = data.result[i].tid;
+                        td4.innerText = data.result[i].tname;
+                        td5.innerHTML = '<td class="text-center">' +
+                                '<a class="btn btn-info btn-xs" data-toggle="modal" data-target="#editCourseModel" id=' + data.result[i].cid + ' onclick=editCourse()>' +
+                                '<span class="glyphicon glyphicon-edit"></span> Edit</a> ' +
+                                '<a class="btn btn-danger btn-xs" onclick=deleteCourse()>' +
+                                '<span class="glyphicon glyphicon-remove"></span> Del</a>'
+                    }
+                }
+            }
+        });
+    };
+
+    var id;
+    var cid;
+    var cname;
+    var tid;
+    var tname;
+
+    function editCourse() {
+        $("tr").click(function () {
+            id = $(this).attr("id");
+            cid = courses.result[id].cid;
+            cname = courses.result[id].cname;
+            tid = courses.result[id].tid;
+            tname = courses.result[id].tname;
+
+            $("#cid").val(cid);
+            $('#cid').attr("readonly", "readonly");
+            $("#cname").val(cname);
+            $('#cname').attr("readonly", "readonly");
+            $("#tid").val(tid);
+            $("#tname").val(tname);
+            $('#tname').attr("readonly", "readonly");
+        });
+    }
+
+    function updateCourse() {
+        var cid = document.getElementById("cid").value;
+        var tid = document.getElementById("tid").value;
+//        var cintroduce = document.getElementById("cintro").value;
+
+        $.ajax({
+            url: 'http://localhost:3000/course/updateCourse',
+            type: 'get',
+            datatype: 'jsonp',
+            crossDomain: true,
+            data: {
+                cid: cid,
+                tid: tid
+            },
+            success: function (data, status, xhr) {
+                console.log(data);
+                if (status === "success" && data.result === 1) {
+                    history.go(0)
+                } else {
+                    document.getElementById("warning").innerHTML = "您输入的信息有误"
+                }
+            }
+        });
+
+    }
+
+    function deleteCourse() {
+        $("tr").click(function () {
+            id = $(this).attr("id");
+            cid = courses.result[id].cid;
+
+            $.ajax({
+                url: 'http://localhost:3000/course/deleteCourse',
+                type: 'get',
+                datatype: 'jsonp',
+                crossDomain: true,
+                data: {
+                    cid: cid
+                },
+                success: function (data, status, xhr) {
+                    console.log(data);
+                    if (status === "success" && data.result === 1) {
+                        alert("删除成功！");
+                        history.go(0)
+                    } else {
+                        alert("删除失败！");
+                    }
+                }
+            });
+        });
+
+    }
+
+    function addCourse() {
+        var cid_add = document.getElementById("cid_add").value;
+        var cname_add = document.getElementById("cname_add").value;
+        var tid_add = document.getElementById("tid_add").value;
+        var cintro_add = document.getElementById("cintro_add").value;
+
+        $.ajax({
+            url: 'http://localhost:3000/course/addCourse',
+            type: 'post',
+            crossDomain: true,
+            data: {
+                cid: cid_add,
+                cname: cname_add,
+                tid: tid_add
+            },
+            success: function (data, status, xhr) {
+                console.log(data);
+                if (status === "success" && data.result === 1) {
+                    alert("添加成功！");
+                    history.go(0);
+                } else {
+                    document.getElementById("warning_add").innerHTML = "添加失败！";
+                }
+            }
+        });
+    }
+
+    function searchCourse() {
+        var search = document.getElementById("search").value;
+
+        $.ajax({
+            url: 'http://localhost:3000/course/searchCourse',
+            type: 'post',
+            crossDomain: true,
+            data: {
+                search: search
+            },
+            success: function (data, status, xhr) {
+                courses = data;
+                var cour = "";
+                cour += '<tr> <td>课程ID</td>' +
+                        ' <td>课程名称</td> <td>教师ID</td> ' +
+                        '<td>教师姓名</td> <td>action</td> </tr>';
+                if (status === "success" && data.status === 1) {
+                    for (var i = 0; i < data.result.length; i++) {
+                        cour += '<tr id=' + i + '> <td>' + data.result[i].cid + '</td>' +
+                                '<td>' + data.result[i].cname + '</td>' +
+                                ' <td>' + data.result[i].tid + '</td> ' +
+                                '<td>' + data.result[i].tname + '</td> ' +
+                                '<td class="text-center">' +
+                                '<a class="btn btn-info btn-xs" data-toggle="modal" data-target="#editCourseModel" id=' + data.result[i].cid + ' onclick=editCourse()>' +
+                                '<span class="glyphicon glyphicon-edit"></span> Edit</a> ' +
+                                '<a class="btn btn-danger btn-xs" onclick=deleteCourse()>' +
+                                '<span class="glyphicon glyphicon-remove"></span> Del</a>'
+                    }
+                    document.getElementById("mytable").innerHTML = cour;
+                }
+                else {
+                    document.getElementById("").innerHTML = "";
+                }
+            }
+        });
+    }
+    //
+    //    document.getElementById("search").addEventListener("search", searchCourse);
+    //    function searchCourse() {
+    //        var x = document.getElementById("myI");
+    //        document.getElementById("demo").innerHTML = "你要检索: " + x.value;
+    //    }
+
+</script>
+<body>
+<div id="throbber" style="display:none; min-height:120px;"></div>
+<div id="noty-holder"></div>
+
+
+<div id="wrapper">
+    <!-- Navigation -->
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <i class="fa fa-bars" aria-hidden="true" style="color: white;"></i>
+            </button>
+            <div class="navbar-brand">
+            </div>
+        </div>
+
+        <div class="navbar-form navbar-left">
+            <div class="input-group">
+                <div class="input-group-btn">
+                    <button class="btn  search-btn-icon">
+                        <i class="fa fa-search" aria-hidden="true"></i>
+                    </button>
+                </div>
+                <input type="Search" id="search" placeholder="Search..."
+                       class="form-control-serch search-box" onsearch="searchCourse()"/>
+            </div>
+        </div>
+
+        <!-- Top Menu Items -->
+        <div class="items">
+            <ul class="nav navbar-right top-nav">
+                <li class="editpro">
+                    <i class="fasett fa-cog" aria-hidden="true" class="menu-button" id="menu-button"></i>
+                    <h5 class="pull-left login-person-head">Welcome WaLiA SaAB</h5>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
+        <div class="collapse navbar-collapse navbar-ex1-collapse"
+             style="background-color: #616060; border:1px solid #616060;">
+            <ul class="nav navbar-nav side-nav">
+                <a href="#"><img class="logostyle"
+                                 src="https://vignette.wikia.nocookie.net/nationstates/images/2/29/WS_Logo.png/revision/latest?cb=20080507063620"
+                                 alt="LOGO"></a>
+                <li>
+                    <a class="#" href="./personnel_management.html" data-toggle="collapse"
+                       data-target="#submenu-1"><i class="fa fa-home"
+                                                   aria-hidden="true"></i>
+                          <span style="color:white;">  Home </span></a>
+                </li>
+                <li>
+                    <a class="active" href="./class.html" data-toggle="collapse" data-target="#submenu-1"><i
+                            class="fa fa-user-o"
+                            aria-hidden="true"></i>  
+                        <span style="color:white;">  课程管理 </span></a>
+                </li>
+                <li>
+                    <a class="#" href="./teacher.html" data-toggle="collapse" data-target="#submenu-1"><i
+                            class="fa fa-calendar"
+                            aria-hidden="true"></i>  
+                        <span style="color:white;"> 教师 </span></a>
+                </li>
+                <li>
+                    <a class="#" href="./student.html" data-toggle="collapse" data-target="#submenu-1"><i
+                            class="fa fa-envelope"
+                            aria-hidden="true"></i> 
+                        <span style="color:white;"> 学生 </span></a>
+                </li>
+                <li>
+                    <a class="#" href="./employee.html" data-toggle="collapse" data-target="#submenu-1"><i
+                            class="fa fa-envelope"
+                            aria-hidden="true"></i> 
+                        <span style="color:white;"> 员工 </span></a>
+                </li>
+
+                <li>
+                    <a class="#" href="./setting.html" data-toggle=" collapse" data-target="#submenu-1"><i
+                            class="fa fa-cogs"
+                            aria-hidden="true"></i>  
+                        <span style="color:white;"> Settings </span></a>
+                </li>
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row text-center">
+            <div class="col-md-12 dashhead">
+
+                <h1>Welcome To course </h1>
+                <button class="glyphicon glyphicon-plus" data-toggle="modal" data-target="#addCourseModel"></button>
+
+                <table class="table table-striped" id="mytable">
+                    <tbody>
+                    <tr>
+                        <td>课程ID</td>
+                        <td>课程名称</td>
+                        <td>教师ID</td>
+                        <td>教师姓名</td>
+                        <td>action</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- addCourse_Modal -->
+    <div class="modal fade" id="addCourseModel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel_add">
+        <div class="modal-dialog" role="document" style="width:400px">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel2">ADD</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+
+                        <label class="control-label">课程ID</label>
+
+                        <input id="cid_add" type="text" name="password" class="form-control"/>
+
+                    </div>
+                    <div class="form-group">
+
+                        <label class="control-label">课程名称</label>
+
+                        <input id="cname_add" type="text" name="password" class="form-control"/>
+                    </div>
+                    <div class="form-group">
+
+                        <label class="control-label">教师ID</label>
+
+                        <input id="tid_add" type="text" name="password" class="form-control"/>
+                    </div>
+                    <div class="form-group">
+
+                        <label class="control-label">课程简介</label>
+
+                        <input id="cintro_add" type="text" name="password" class="form-control"/>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <span id="warning_add" style="color: red"></span>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick=addCourse()>Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- editCourse_Modal -->
+    <div class="modal fade" id="editCourseModel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document" style="width:400px">
+            <div class="modal-content">
+
+
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">EDIT</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+
+                        <label class="control-label">课程ID</label>
+
+                        <input id="cid" type="text" name="password" class="form-control"/>
+
+                    </div>
+                    <div class="form-group">
+
+                        <label class="control-label">课程名称</label>
+
+                        <input id="cname" type="text" name="password" class="form-control"/>
+                    </div>
+                    <div class="form-group">
+
+                        <label class="control-label">教师ID</label>
+
+                        <input id="tid" type="text" name="password" class="form-control"/>
+                    </div>
+                    <div class="form-group">
+
+                        <label class="control-label">教师姓名</label>
+
+                        <input id="tname" type="text" name="password" class="form-control"/>
+                    </div>
+                    <div class="form-group">
+
+                        <label class="control-label">课程简介</label>
+
+                        <input id="cintro" type="text" name="password" class="form-control"/>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <span id="warning" style="color: red"></span>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick=updateCourse()>Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div><!-- /#wrapper -->
+
+</body>
+</html>
