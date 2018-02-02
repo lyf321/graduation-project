@@ -5,6 +5,9 @@
     <link rel="stylesheet" type="text/css" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js" type="text/javascript"></script>
 
+    <link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <title>student</title>
 </head>
 <style>
@@ -181,6 +184,7 @@
     }
 </style>
 <script type="text/javascript">
+    var students;
     window.onload = function () {
         $.ajax({
             url: 'http://localhost:3000/student/getAll',
@@ -188,6 +192,7 @@
             datatype: 'jsonp',
             crossDomain: true,
             success: function (data, status, xhr) {
+                students = data;
                 if (status === "success") {
                     var tb = document.getElementById("mytable");
                     for (var i = 0; i < data.result.length; i++) {
@@ -197,21 +202,165 @@
                         var td2 = tr.insertCell(1);
                         var td3 = tr.insertCell(2);
                         var td4 = tr.insertCell(3);
+                        var td5 = tr.insertCell(4);
                         td1.innerText = data.result[i].sid;
                         td2.innerText = data.result[i].sname;
                         td3.innerText = data.result[i].sage;
                         td4.innerText = data.result[i].ssex;
-
-////                        td6.innerHTML = '<td class="text-center">' +
-////                                '<a class="btn btn-info btn-xs" id=' + data.Detail[i].emp_id + ' onclick=editUser()>' +
-////                                '<span class="glyphicon glyphicon-edit"></span> Edit</a> ' +
-////                                '<a href="#" class="btn btn-danger btn-xs" onclick=deleteUser()>' +
-////                                '<span class="glyphicon glyphicon-remove"></span> Del</a>'
+                        td5.innerHTML = '<td class="text-center">' +
+                                '<a class="btn btn-info btn-xs" data-toggle="modal" data-target="#editStudentModel" id=' + data.result[i].tid + ' onclick=editStudent()>' +
+                                '<span class="glyphicon glyphicon-edit"></span> Edit</a> ' +
+                                '<a class="btn btn-danger btn-xs" onclick=deleteStudent()>' +
+                                '<span class="glyphicon glyphicon-remove"></span> Del</a>'
                     }
                 }
             }
         });
     }
+
+    var id;
+    var sid;
+    var sname;
+    var sage;
+    var ssex;
+
+    function editStudent() {
+        $("tr").click(function () {
+            id = $(this).attr("id");
+            sid = students.result[id].sid;
+            sname = students.result[id].sname;
+            sage = students.result[id].sage;
+            ssex = students.result[id].ssex;
+
+            $("#sid").val(sid);
+            $('#sid').attr("readonly", "readonly");
+            $("#sname").val(sname);
+            $("#sage").val(sage);
+            $("#ssex").val(ssex);
+        });
+    }
+
+    function updateStudent() {
+        var sid = document.getElementById("sid").value;
+        var sname = document.getElementById("sname").value;
+        var sage = document.getElementById("sage").value;
+        var ssex = document.getElementById("ssex").value;
+
+        $.ajax({
+            url: 'http://localhost:3000/student/updateStudent',
+            type: 'post',
+            datatype: 'jsonp',
+            crossDomain: true,
+            data: {
+                sid: sid,
+                sname: sname,
+                sage: sage,
+                ssex: ssex
+            },
+            success: function (data, status, xhr) {
+                console.log(data);
+                if (status === "success" && data.result === 1) {
+                    history.go(0)
+                } else {
+                    document.getElementById("warning").innerHTML = "您输入的信息有误"
+                }
+            }
+        });
+
+    }
+
+    function deleteStudent() {
+        $("tr").click(function () {
+            id = $(this).attr("id");
+            sid = students.result[id].sid;
+
+            $.ajax({
+                url: 'http://localhost:3000/student/deleteStudent',
+                type: 'get',
+                datatype: 'jsonp',
+                crossDomain: true,
+                data: {
+                    sid: sid
+                },
+                success: function (data, status, xhr) {
+                    console.log(data);
+                    if (status === "success" && data.result === 1) {
+                        alert("删除成功！");
+                        history.go(0)
+                    } else {
+                        alert("删除失败！");
+                    }
+                }
+            });
+        });
+
+    }
+
+    function addStudent() {
+        var sid_add = document.getElementById("sid_add").value;
+        alert(sid_add)
+        var sname_add = document.getElementById("sname_add").value;
+        var sage_add = document.getElementById("sage_add").value;
+        var ssex_add = document.getElementById("ssex_add").value;
+
+        $.ajax({
+            url: 'http://localhost:3000/student/addStudent',
+            type: 'post',
+            crossDomain: true,
+            data: {
+                sid: sid_add,
+                sname: sname_add,
+                sage: sage_add,
+                ssex: ssex_add
+            },
+            success: function (data, status, xhr) {
+                console.log(data);
+                if (status === "success" && data.result === 1) {
+                    alert("添加成功！");
+                    history.go(0);
+                } else {
+                    document.getElementById("warning_add").innerHTML = "添加失败！";
+                }
+            }
+        });
+    }
+
+    function searchStudent() {
+        var search = document.getElementById("search").value;
+
+        $.ajax({
+            url: 'http://localhost:3000/student/searchStudent',
+            type: 'post',
+            crossDomain: true,
+            data: {
+                search: search
+            },
+            success: function (data, status, xhr) {
+                console.log(data.status)
+                teachers = data;
+                var cour = "";
+                cour += '<tr> <td>学生ID</td> <td>姓名</td> <td>年龄</td> <td>性别</td> <td>action</td></tr>';
+                if (status === "success" && data.status === 1) {
+                    for (var i = 0; i < data.result.length; i++) {
+                        cour += '<tr id=' + i + '> <td>' + data.result[i].sid + '</td>' +
+                                '<td>' + data.result[i].sname + '</td>' +
+                                ' <td>' + data.result[i].sage + '</td> ' +
+                                '<td>' + data.result[i].ssex + '</td> ' +
+                                '<td class="text-center">' +
+                                '<a class="btn btn-info btn-xs" data-toggle="modal" data-target="#editStudentModel" id=' + data.result[i].tid + ' onclick=editStudent()>' +
+                                '<span class="glyphicon glyphicon-edit"></span> Edit</a> ' +
+                                '<a class="btn btn-danger btn-xs" onclick=deleteStudent()>' +
+                                '<span class="glyphicon glyphicon-remove"></span> Del</a>'
+                    }
+                    document.getElementById("mytable").innerHTML = cour;
+                }
+                else {
+                    document.getElementById("").innerHTML = "";
+                }
+            }
+        });
+    }
+
 </script>
 <body>
 <div id="throbber" style="display:none; min-height:120px;"></div>
@@ -232,16 +381,17 @@
             </div>
         </div>
 
-        <form action="" class="navbar-form navbar-left">
+        <div action="" class="navbar-form navbar-left">
             <div class="input-group">
                 <div class="input-group-btn">
                     <button class="btn  search-btn-icon">
                         <i class="fa fa-search" aria-hidden="true"></i>
                     </button>
                 </div>
-                <input type="Search" placeholder="Search..." class="form-control-serch search-box"/>
+                <input type="Search" id="search" placeholder="Search..."
+                       class="form-control-serch search-box" onsearch="searchStudent()"/>
             </div>
-        </form>
+        </div>
 
         <!-- Top Menu Items -->
         <div class="items">
@@ -305,6 +455,8 @@
         <div class="row text-center">
             <div class="col-md-12 dashhead">
                 <h1> Welcome To student</h1>
+                <button class="glyphicon glyphicon-plus" data-toggle="modal" data-target="#addStudentModel"></button>
+
                 <table class="table table-striped" id="mytable">
                     <tbody>
                     <tr>
@@ -312,9 +464,100 @@
                         <td>姓名</td>
                         <td>年龄</td>
                         <td>性别</td>
+                        <td>action</td>
                     </tr>
                     </tbody>
                 </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- addTeacher_Modal -->
+    <div class="modal fade" id="addStudentModel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel_add">
+        <div class="modal-dialog" role="document" style="width:400px">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel2">ADD</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+
+                        <label class="control-label">教师ID</label>
+
+                        <input id="sid_add" type="text" name="password" class="form-control"/>
+
+                    </div>
+                    <div class="form-group">
+
+                        <label class="control-label">姓名</label>
+
+                        <input id="sname_add" type="text" name="password" class="form-control"/>
+                    </div>
+                    <div class="form-group">
+
+                        <label class="control-label">年龄</label>
+
+                        <input id="sage_add" type="text" name="password" class="form-control"/>
+                    </div>
+                    <div class="form-group">
+
+                        <label class="control-label">性别</label>
+
+                        <input id="ssex_add" type="text" name="password" class="form-control"/>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <span id="warning_add" style="color: red"></span>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick=addStudent()>Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- editStudent_Modal -->
+    <div class="modal fade" id="editStudentModel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document" style="width:400px">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">EDIT</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+
+                        <label class="control-label">教师ID</label>
+
+                        <input id="sid" type="text" class="form-control"/>
+
+                    </div>
+                    <div class="form-group">
+
+                        <label class="control-label">姓名</label>
+
+                        <input id="sname" type="text" class="form-control"/>
+                    </div>
+                    <div class="form-group">
+
+                        <label class="control-label">年龄</label>
+
+                        <input id="sage" type="text" class="form-control"/>
+                    </div>
+                    <div class="form-group">
+
+                        <label class="control-label">性别</label>
+
+                        <input id="ssex" type="text" class="form-control"/>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <span id="warning" style="color: red"></span>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick=updateStudent()>Save changes</button>
+                </div>
             </div>
         </div>
     </div>
