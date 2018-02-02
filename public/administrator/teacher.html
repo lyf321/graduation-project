@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js" type="text/javascript"></script>
+
+    <link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <title>teacher</title>
 </head>
 <style>
@@ -180,6 +184,7 @@
     }
 </style>
 <script type="text/javascript">
+    var teachers;
     window.onload = function () {
         $.ajax({
             url: 'http://localhost:3000/teacher/getAll',
@@ -187,7 +192,8 @@
             datatype: 'jsonp',
             crossDomain: true,
             success: function (data, status, xhr) {
-                console.log(data, status);
+                teachers = data;
+
                 if (status === "success") {
                     var tb = document.getElementById("mytable");
                     for (var i = 0; i < data.result.length; i++) {
@@ -197,21 +203,164 @@
                         var td2 = tr.insertCell(1);
                         var td3 = tr.insertCell(2);
                         var td4 = tr.insertCell(3);
+                        var td5 = tr.insertCell(4);
                         td1.innerText = data.result[i].tid;
                         td2.innerText = data.result[i].tname;
                         td3.innerText = data.result[i].tage;
                         td4.innerText = data.result[i].tsex;
-
-////                        td6.innerHTML = '<td class="text-center">' +
-////                                '<a class="btn btn-info btn-xs" id=' + data.Detail[i].emp_id + ' onclick=editUser()>' +
-////                                '<span class="glyphicon glyphicon-edit"></span> Edit</a> ' +
-////                                '<a href="#" class="btn btn-danger btn-xs" onclick=deleteUser()>' +
-////                                '<span class="glyphicon glyphicon-remove"></span> Del</a>'
+                        td5.innerHTML = '<td class="text-center">' +
+                                '<a class="btn btn-info btn-xs" data-toggle="modal" data-target="#editTeacherModel" id=' + data.result[i].tid + ' onclick=editTeacher()>' +
+                                '<span class="glyphicon glyphicon-edit"></span> Edit</a> ' +
+                                '<a class="btn btn-danger btn-xs" onclick=deleteTeacher()>' +
+                                '<span class="glyphicon glyphicon-remove"></span> Del</a>'
                     }
                 }
             }
         });
     }
+
+    var id;
+    var tid;
+    var tname;
+    var tage;
+    var tsex;
+
+    function editTeacher() {
+        $("tr").click(function () {
+            id = $(this).attr("id");
+            tid = teachers.result[id].tid;
+            tname = teachers.result[id].tname;
+            tage = teachers.result[id].tage;
+            tsex = teachers.result[id].tsex;
+
+            $("#tid").val(tid);
+            $('#tid').attr("readonly", "readonly");
+            $("#tname").val(tname);
+            $("#tage").val(tage);
+            $("#tsex").val(tsex);
+        });
+    }
+
+    function updateTeacher() {
+        var tid = document.getElementById("tid").value;
+        var tname = document.getElementById("tname").value;
+        var tage = document.getElementById("tage").value;
+        var tsex = document.getElementById("tsex").value;
+
+        $.ajax({
+            url: 'http://localhost:3000/teacher/updateTeacher',
+            type: 'post',
+            datatype: 'jsonp',
+            crossDomain: true,
+            data: {
+                tid: tid,
+                tname: tname,
+                tage: parseInt(tage),
+                tsex: tsex
+            },
+            success: function (data, status, xhr) {
+                console.log(data);
+                if (status === "success" && data.result === 1) {
+                    history.go(0)
+                } else {
+                    document.getElementById("warning").innerHTML = "您输入的信息有误"
+                }
+            }
+        });
+
+    }
+
+    function deleteTeacher() {
+        $("tr").click(function () {
+            id = $(this).attr("id");
+            tid = teachers.result[id].tid;
+
+            $.ajax({
+                url: 'http://localhost:3000/teacher/deleteTeacher',
+                type: 'get',
+                datatype: 'jsonp',
+                crossDomain: true,
+                data: {
+                    tid: tid
+                },
+                success: function (data, status, xhr) {
+                    console.log(data);
+                    if (status === "success" && data.result === 1) {
+                        alert("删除成功！");
+                        history.go(0)
+                    } else {
+                        alert("删除失败！");
+                    }
+                }
+            });
+        });
+
+    }
+
+    function addTeacher() {
+        var tid_add = document.getElementById("tid_add").value;
+        var tname_add = document.getElementById("tname_add").value;
+        var tage_add = document.getElementById("tage_add").value;
+        var tsex_add = document.getElementById("tsex_add").value;
+
+        $.ajax({
+            url: 'http://localhost:3000/teacher/addTeacher',
+            type: 'post',
+            crossDomain: true,
+            data: {
+                tid: tid_add,
+                tname: tname_add,
+                tage: tage_add,
+                tsex: tsex_add
+            },
+            success: function (data, status, xhr) {
+                console.log(data);
+                if (status === "success" && data.result === 1) {
+                    alert("添加成功！");
+                    history.go(0);
+                } else {
+                    document.getElementById("warning_add").innerHTML = "添加失败！";
+                }
+            }
+        });
+    }
+
+    function searchTeacher() {
+        var search = document.getElementById("search").value;
+
+        $.ajax({
+            url: 'http://localhost:3000/teacher/searchTeacher',
+            type: 'post',
+            crossDomain: true,
+            data: {
+                search: search
+            },
+            success: function (data, status, xhr) {
+                console.log(data.status)
+                teachers = data;
+                var cour = "";
+                cour += '<tr> <td>教师ID</td> <td>姓名</td> <td>年龄</td> <td>性别</td> <td>action</td></tr>';
+                if (status === "success" && data.status === 1) {
+                    for (var i = 0; i < data.result.length; i++) {
+                        cour += '<tr id=' + i + '> <td>' + data.result[i].tid + '</td>' +
+                                '<td>' + data.result[i].tname + '</td>' +
+                                ' <td>' + data.result[i].tage + '</td> ' +
+                                '<td>' + data.result[i].tsex + '</td> ' +
+                                '<td class="text-center">' +
+                                '<a class="btn btn-info btn-xs" data-toggle="modal" data-target="#editTeacherModel" id=' + data.result[i].tid + ' onclick=editTeacher()>' +
+                                '<span class="glyphicon glyphicon-edit"></span> Edit</a> ' +
+                                '<a class="btn btn-danger btn-xs" onclick=deleteTeacher()>' +
+                                '<span class="glyphicon glyphicon-remove"></span> Del</a>'
+                    }
+                    document.getElementById("mytable").innerHTML = cour;
+                }
+                else {
+                    document.getElementById("").innerHTML = "";
+                }
+            }
+        });
+    }
+
 </script>
 <body>
 <div id="throbber" style="display:none; min-height:120px;"></div>
@@ -232,16 +381,17 @@
             </div>
         </div>
 
-        <form action="" class="navbar-form navbar-left">
+        <div action="" class="navbar-form navbar-left">
             <div class="input-group">
                 <div class="input-group-btn">
                     <button class="btn  search-btn-icon">
                         <i class="fa fa-search" aria-hidden="true"></i>
                     </button>
                 </div>
-                <input type="Search" placeholder="Search..." class="form-control-serch search-box"/>
+                <input type="Search" id="search" placeholder="Search..."
+                       class="form-control-serch search-box" onsearch="searchTeacher()"/>
             </div>
-        </form>
+        </div>
 
         <!-- Top Menu Items -->
         <div class="items">
@@ -261,8 +411,9 @@
                                  src="https://vignette.wikia.nocookie.net/nationstates/images/2/29/WS_Logo.png/revision/latest?cb=20080507063620"
                                  alt="LOGO"></a>
                 <li>
-                    <a class="#" href="./personnel_management.html" data-toggle="collapse" data-target="#submenu-1"><i class="fa fa-home"
-                                                                                             aria-hidden="true"></i>
+                    <a class="#" href="./personnel_management.html" data-toggle="collapse" data-target="#submenu-1"><i
+                            class="fa fa-home"
+                            aria-hidden="true"></i>
                           <span style="color:white;">  Home </span></a>
                 </li>
                 <li>
@@ -305,6 +456,8 @@
         <div class="row text-center">
             <div class="col-md-12 dashhead">
                 <h1> Welcome To teacher</h1>
+                <button class="glyphicon glyphicon-plus" data-toggle="modal" data-target="#addTeacherModel"></button>
+
                 <table class="table table-striped" id="mytable">
                     <tbody>
                     <tr>
@@ -312,9 +465,100 @@
                         <td>姓名</td>
                         <td>年龄</td>
                         <td>性别</td>
+                        <td>action</td>
                     </tr>
                     </tbody>
                 </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- addTeacher_Modal -->
+    <div class="modal fade" id="addTeacherModel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel_add">
+        <div class="modal-dialog" role="document" style="width:400px">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel2">ADD</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+
+                        <label class="control-label">教师ID</label>
+
+                        <input id="tid_add" type="text" name="password" class="form-control"/>
+
+                    </div>
+                    <div class="form-group">
+
+                        <label class="control-label">姓名</label>
+
+                        <input id="tname_add" type="text" name="password" class="form-control"/>
+                    </div>
+                    <div class="form-group">
+
+                        <label class="control-label">年龄</label>
+
+                        <input id="tage_add" type="text" name="password" class="form-control"/>
+                    </div>
+                    <div class="form-group">
+
+                        <label class="control-label">性别</label>
+
+                        <input id="tsex_add" type="text" name="password" class="form-control"/>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <span id="warning_add" style="color: red"></span>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick=addTeacher()>Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- editTeacher_Modal -->
+    <div class="modal fade" id="editTeacherModel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document" style="width:400px">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">EDIT</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+
+                        <label class="control-label">教师ID</label>
+
+                        <input id="tid" type="text" class="form-control"/>
+
+                    </div>
+                    <div class="form-group">
+
+                        <label class="control-label">姓名</label>
+
+                        <input id="tname" type="text" class="form-control"/>
+                    </div>
+                    <div class="form-group">
+
+                        <label class="control-label">年龄</label>
+
+                        <input id="tage" type="text" class="form-control"/>
+                    </div>
+                    <div class="form-group">
+
+                        <label class="control-label">性别</label>
+
+                        <input id="tsex" type="text" class="form-control"/>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <span id="warning" style="color: red"></span>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick=updateTeacher()>Save changes</button>
+                </div>
             </div>
         </div>
     </div>
