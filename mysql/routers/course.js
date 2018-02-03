@@ -24,8 +24,11 @@ Router.use('/getAll', function (req, res) {
 Router.use('/updateCourse', function (req, res) {
     var cid = req.param('cid');
     var tid = req.param('tid');
+    var ctype = req.param('ctype');
+    var cintroduce = req.param('cintroduce');
+    var cproperty = req.param('cproperty');
 
-    updateCourse(cid, tid, function (result, err) {
+    updateCourse(cid, tid, ctype, cintroduce, cproperty, function (result, err) {
         res.send({result: result.status})
     })
 });
@@ -33,7 +36,7 @@ Router.use('/updateCourse', function (req, res) {
 
 Router.use('/deleteCourse', function (req, res) {
     var cid_del = req.param('cid');
-    console.log(cid_del);
+
     deleteCourse(cid_del, function (result, err) {
         res.send({result: result.status})
     })
@@ -42,8 +45,14 @@ Router.use('/deleteCourse', function (req, res) {
 Router.use('/searchCourse', function (req, res) {
 
     searchCourse(req.body, function (result, err) {
-        console.log(result)
         res.send({result: result.results, status: result.status})
+    })
+});
+
+Router.use('/addCourse', function (req, res) {
+
+    addCourse(req.body, function (result, err) {
+        res.send({result: result.status})
     })
 });
 

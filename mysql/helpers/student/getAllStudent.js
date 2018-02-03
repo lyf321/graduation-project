@@ -9,10 +9,8 @@ module.exports = function (data, callback) {
             throw err;
         } else {
             if (results.length > 0) {
-                console.log(results);
                 callback({results: results, status: 1});
             } else {
-                console.log(results);
                 callback({status: 0});
             }
         }

@@ -203,11 +203,21 @@
                         var td3 = tr.insertCell(2);
                         var td4 = tr.insertCell(3);
                         var td5 = tr.insertCell(4);
+                        var td6 = tr.insertCell(5);
+                        var td7 = tr.insertCell(6);
+                        var td8 = tr.insertCell(7);
                         td1.innerText = data.result[i].cid;
                         td2.innerText = data.result[i].cname;
                         td3.innerText = data.result[i].tid;
                         td4.innerText = data.result[i].tname;
-                        td5.innerHTML = '<td class="text-center">' +
+                        td5.innerText = data.result[i].ctype;
+                        if (data.result[i].cproperty === "1") {
+                            td6.innerText = "公开课";
+                        } else {
+                            td6.innerText = "一对一";
+                        }
+                        td7.innerText = data.result[i].cintroduce;
+                        td8.innerHTML = '<td class="text-center">' +
                                 '<a class="btn btn-info btn-xs" data-toggle="modal" data-target="#editCourseModel" id=' + data.result[i].cid + ' onclick=editCourse()>' +
                                 '<span class="glyphicon glyphicon-edit"></span> Edit</a> ' +
                                 '<a class="btn btn-danger btn-xs" onclick=deleteCourse()>' +
@@ -223,6 +233,9 @@
     var cname;
     var tid;
     var tname;
+    var ctype;
+    var cproperty;
+    var cintroduce;
 
     function editCourse() {
         $("tr").click(function () {
@@ -231,6 +244,9 @@
             cname = courses.result[id].cname;
             tid = courses.result[id].tid;
             tname = courses.result[id].tname;
+            ctype = courses.result[id].ctype;
+            cproperty = courses.result[id].cproperty;
+            cintroduce = courses.result[id].cintroduce;
 
             $("#cid").val(cid);
             $('#cid').attr("readonly", "readonly");
@@ -239,13 +255,18 @@
             $("#tid").val(tid);
             $("#tname").val(tname);
             $('#tname').attr("readonly", "readonly");
+            $("#ctype").val(ctype);
+            $("#cintro").val(cintroduce);
+            $("#cproperty").val(cproperty);
         });
     }
 
     function updateCourse() {
         var cid = document.getElementById("cid").value;
         var tid = document.getElementById("tid").value;
-//        var cintroduce = document.getElementById("cintro").value;
+        var cintroduce = document.getElementById("cintro").value;
+        var ctype = document.getElementById("ctype").value;
+        var cproperty = document.getElementById("cproperty").value;
 
         $.ajax({
             url: 'http://localhost:3000/course/updateCourse',
@@ -254,7 +275,10 @@
             crossDomain: true,
             data: {
                 cid: cid,
-                tid: tid
+                tid: tid,
+                ctype: ctype,
+                cproperty: cproperty,
+                cintroduce: cintroduce
             },
             success: function (data, status, xhr) {
                 console.log(data);
@@ -300,6 +324,8 @@
         var cname_add = document.getElementById("cname_add").value;
         var tid_add = document.getElementById("tid_add").value;
         var cintro_add = document.getElementById("cintro_add").value;
+        var ctype_add = document.getElementById("ctype_add").value;
+        var cproperty_add = document.getElementById("cproperty_add").value;
 
         $.ajax({
             url: 'http://localhost:3000/course/addCourse',
@@ -308,7 +334,10 @@
             data: {
                 cid: cid_add,
                 cname: cname_add,
-                tid: tid_add
+                tid: tid_add,
+                ctype: ctype_add,
+                cproperty: cproperty_add,
+                cintroduce: cintro_add
             },
             success: function (data, status, xhr) {
                 console.log(data);
@@ -337,13 +366,17 @@
                 var cour = "";
                 cour += '<tr> <td>课程ID</td>' +
                         ' <td>课程名称</td> <td>教师ID</td> ' +
-                        '<td>教师姓名</td> <td>action</td> </tr>';
+                        '<td>教师姓名</td> <td>action</td><td>课程类型</td> ' +
+                        '<td>课程性质</td> <td>课程介绍</td> </tr>';
                 if (status === "success" && data.status === 1) {
                     for (var i = 0; i < data.result.length; i++) {
                         cour += '<tr id=' + i + '> <td>' + data.result[i].cid + '</td>' +
                                 '<td>' + data.result[i].cname + '</td>' +
                                 ' <td>' + data.result[i].tid + '</td> ' +
                                 '<td>' + data.result[i].tname + '</td> ' +
+                                '<td>' + data.result[i].ctype + '</td>' +
+                                ' <td>' + data.result[i].cproperty + '</td> ' +
+                                '<td>' + data.result[i].cintroduce + '</td> ' +
                                 '<td class="text-center">' +
                                 '<a class="btn btn-info btn-xs" data-toggle="modal" data-target="#editCourseModel" id=' + data.result[i].cid + ' onclick=editCourse()>' +
                                 '<span class="glyphicon glyphicon-edit"></span> Edit</a> ' +
@@ -463,6 +496,9 @@
                         <td>课程名称</td>
                         <td>教师ID</td>
                         <td>教师姓名</td>
+                        <td>课程类型</td>
+                        <td>课程性质</td>
+                        <td>课程介绍</td>
                         <td>action</td>
                     </tr>
                     </tbody>
@@ -500,6 +536,24 @@
                         <label class="control-label">教师ID</label>
 
                         <input id="tid_add" type="text" name="password" class="form-control"/>
+                    </div>
+                    <div class="form-group">
+
+                        <label class="control-label">课程类型</label>
+
+                        <input id="ctype_add" type="text" name="password" class="form-control"/>
+                    </div>
+                    <div class="form-group">
+
+                        <label class="control-label">课程性质</label>
+
+                        <span style="margin-left:172px;width:18px;overflow:hidden">
+                        <select style="width:190px" id="cproperty_add"
+                                onchange="this.parentNode.nextSibling.value=this.value" class="form-control">
+                            <option value="0">一对一</option>
+                            <option value="1">公开课</option>
+                        </select>
+                        </span>
                     </div>
                     <div class="form-group">
 
@@ -552,6 +606,24 @@
                         <label class="control-label">教师姓名</label>
 
                         <input id="tname" type="text" name="password" class="form-control"/>
+                    </div>
+                    <div class="form-group">
+
+                        <label class="control-label">课程类型</label>
+
+                        <input id="ctype" type="text" name="password" class="form-control"/>
+                    </div>
+                    <div class="form-group">
+
+                        <label class="control-label">课程性质</label>
+
+                        <span style="margin-left:172px;width:18px;overflow:hidden">
+                        <select style="width:190px" id="cproperty"
+                                onchange="this.parentNode.nextSibling.value=this.value" class="form-control">
+                            <option value="0">一对一</option>
+                            <option value="1">公开课</option>
+                        </select>
+                        </span>
                     </div>
                     <div class="form-group">
 

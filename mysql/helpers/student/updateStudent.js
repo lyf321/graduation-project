@@ -2,7 +2,8 @@ const conn = require("../../mysql");
 
 module.exports = function (data, callback) {
     let sql = "update students set sname='" + data.sname + "', sage = " +
-        data.sage + ", ssex = '" + data.ssex + "' where sid='" + data.sid + "'";
+        data.sage + ", ssex = '" + data.ssex + "', semail = '" + data.semail +
+        "', saddress = '" + data.saddress + "', snumber = '" + data.snumber + "' where sid='" + data.sid + "'";
     conn.query(sql, function (err, results, fields) {
         if (err) {
             console.log("错误");
