@@ -2,9 +2,587 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>跟踪学习</title>
-</head>
-<body>
+    <link rel="stylesheet" type="text/css" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css">
 
+    <link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <title>我的学生</title>
+</head>
+<style>
+    body {
+        font-family: 'lato' !important;
+        /*background-color: #eee;*/
+    }
+
+    /*navbar start*/
+
+    @media (min-width: 768px) {
+
+        body {
+            margin-top: 50px;
+        }
+    }
+
+    #wrapper {
+        padding-left: 0;
+    }
+
+    #page-wrapper {
+        width: 100%;
+        padding: 0;
+    }
+
+    /* Side Navigation */
+
+    @media (min-width: 768px) {
+
+        #wrapper {
+            padding-left: 225px;
+        }
+
+        #page-wrapper {
+            padding: 2px 10px;
+        }
+
+        .side-nav {
+            position: fixed;
+            top: -21px;
+            left: 225px;
+            width: 225px;
+            margin-left: -225px;
+            border: none;
+            border-radius: 0;
+            overflow-y: auto;
+            background-color: #313131;
+            bottom: 0;
+            overflow-x: hidden;
+            padding-bottom: 40px;
+            margin-top: 20px;
+        }
+
+        .side-nav > li > a {
+            width: 225px;
+            border-bottom: 1px solid #6C7278;
+            margin-top: 15px;
+        }
+    }
+
+    .navbar-inverse .navbar-collapse, .navbar-inverse .navbar-form {
+        border-color: #616060 !important;
+    }
+
+    .navbar-ex1-collapse {
+        background-color: #fff;
+    }
+
+    .logostyle {
+        width: 50%;
+        max-width: 186px;
+        margin-top: 10px;
+        margin-left: 55px;
+    }
+
+    .navbar-inverse .navbar-nav > li > .active {
+        border-left: 3px solid white;
+    }
+
+    .nav > li > a {
+        position: relative;
+        display: block;
+        padding: 12px 15px;
+        margin-right: 15px;
+    }
+
+    .nav .open > a, .nav .open > a:focus, .nav .open > a:hover {
+        background-color: transparent;
+        border-color: white;
+    }
+
+    a {
+        color: white !important;
+        text-decoration: none;
+    }
+
+    .form-control-serch {
+        height: 32px;
+        padding: 0px 12px;
+        font-size: 14px;
+        line-height: 1.42857143;
+        color: #555;
+        background-color: #fff;
+        background-image: none;
+        border: 1px solid #ccc;
+        border-radius: 0px 22px 22px 0px;
+        box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+        transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+    }
+
+    .search-btn-icon {
+        background-color: #fff;
+        border: 1px solid #E8E8E8;
+        border-right: transparent !important;
+        border-top-left-radius: 30px;
+        border-bottom-left-radius: 30px;
+        height: 32px;
+        margin-left: 200px;
+    }
+
+    .search-box {
+        border-left: transparent !important;
+        border-top-right-radius: 30px;
+        border-bottom-right-radius: 30px;
+        border: 1px solid #E8E8E8;
+        height: 32px;
+    }
+
+    .fasett {
+        display: inline-block;
+        font: normal normal normal 14px/1 FontAwesome;
+        font-size: 25px;
+        text-rendering: auto;
+        color: white;
+        margin-top: 10px;
+        margin-right: 30px;
+        cursor: pointer;
+    }
+
+    a:hover {
+        background-color: transparent !important;
+    }
+
+    .editpro h5 {
+        margin-right: 15px;
+        margin-top: 15px;
+        color: white;
+    }
+
+    /*navbar end*/
+    @media screen and (max-device-width: 640px) {
+
+        .search-btn-icon {
+            background-color: #fff;
+            border: 1px solid #E8E8E8;
+            border-right: transparent !important;
+            border-top-left-radius: 30px;
+            border-bottom-left-radius: 30px;
+            height: 32px;
+            margin-left: 115px;
+        }
+
+        .editpro h5 {
+            margin-right: 12px;
+            margin-top: 15px;
+            color: white;
+            margin-left: 158px;
+        }
+
+        .dashhead h1 {
+            margin-top: 180px;
+        }
+    }
+
+    #course_list, #course_list_eva {
+        margin-left: 100px;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-auto-rows: 250px;
+    }
+
+    .bookList .name {
+        margin-top: 125px;
+        height: 25px;
+        line-height: 25px;
+        font-size: 16px;
+        font-weight: bold;
+        text-align: center;
+        color: black;
+        position: absolute;
+        width: 200px;
+    }
+
+    .bookList span {
+        filter: alpha(opacity=50);
+        -moz-opacity: 0.5;
+        opacity: 0.5;
+        background: #ffffff;
+        margin-top: 125px;
+        height: 25px;
+        position: absolute;
+        width: 200px;
+    }
+</style>
+<script>
+    let studentsEva;
+    let students;
+    let total = 0;
+    let uid = sessionStorage.getItem("id");
+    window.onload = function () {
+        $.ajax({
+            url: 'http://localhost:3000/teacher/searchOrderStudentEvaluation',
+            type: 'post',
+            datatype: 'jsonp',
+            data: {
+                tid: uid
+            },
+            crossDomain: true,
+            success: function (data, status, xhr) {
+                studentsEva = data;
+                total += data.result.length;
+                let list_1 = "";
+                if (status === "success" && data.status === 1) {
+                    for (let i = 0; i < data.result.length; i++) {
+                        list_1 += '<div> ' +
+                                '<span></span><div class="name">' + data.result[i].sname + '</div>' +
+                                '<a data-toggle="modal" data-target="#updateEvaluationStuModel" onclick=addEva_1()>' +
+                                '<img src="../upload/avatar/1.png" style="width: 200px;height: 150px;" id=' + data.result[i].sid + '> </a>' +
+                                '</div>'
+                    }
+                    document.getElementById("course_list_eva").innerHTML = list_1;
+                }
+            }
+        });
+
+        $.ajax({
+            url: 'http://localhost:3000/teacher/searchOrderStudent',
+            type: 'post',
+            datatype: 'jsonp',
+            data: {
+                tid: uid
+            },
+            crossDomain: true,
+            success: function (data, status, xhr) {
+                students = data;
+                console.log(data);
+                let list = "";
+                console.log(status, data.status, studentsEva.status)
+                if (status === "success" && data.status === 1 && studentsEva.status === 1) {
+                    for (let j = 0; j < studentsEva.result.length; j++) {
+                        for (let i = 0; i < data.result.length; i++) {
+
+                            if (data.result[i].cid === studentsEva.result[j].cid ||
+                                    data.result[i].sid === studentsEva.result[j].sid) {
+                                data.result.splice(i, 1);
+                            } else {
+                                total += 1;
+                                list += '<div> ' +
+                                        '<span></span><div class="name">' + data.result[i].sname + '</div>' +
+                                        '<a data-toggle="modal" data-target="#evaluationStuModel" onclick=addEva()>' +
+                                        '<img src="../upload/avatar/1.png" style="width: 200px;height: 150px;" id=' + data.result[i].sid + '> </a>' +
+                                        '</div>'
+                            }
+                        }
+                    }
+                    document.getElementById("course_list").innerHTML = list;
+                } else if (status === "success" && data.status === 1 && studentsEva.status === 0) {
+                    total += data.result.length;
+                    for (let i = 0; i < data.result.length; i++) {
+                        list += '<div> ' +
+                                '<span></span><div class="name">' + data.result[i].sname + '</div>' +
+                                '<a data-toggle="modal" data-target="#evaluationStuModel" onclick=addEva()>' +
+                                '<img src="../upload/avatar/1.png" style="width: 200px;height: 150px;" id=' + data.result[i].sid + '> </a>' +
+                                '</div>'
+                    }
+                    document.getElementById("course_list").innerHTML = list;
+                }
+                document.getElementById("total").innerHTML = total;
+            }
+        });
+    };
+
+    let sid;
+    let sname;
+    let cname;
+    let tid;
+    let cid;
+
+    function addEva() {
+        document.getElementById("course_list").addEventListener("click", function (event) {
+
+            sid = event.target.id;
+            for (let i = 0; i < students.result.length; i++) {
+                if (sid === students.result[i].sid) {
+                    sname = students.result[i].sname;
+                    tid = students.result[i].tid;
+                    cid = students.result[i].cid;
+                    cname = students.result[i].cname;
+
+                    $("#sname").val(sname);
+                    $('#sname').attr("readonly", "readonly");
+                    $("#cname").val(cname);
+                    $('#cname').attr("readonly", "readonly");
+                }
+            }
+        })
+    }
+
+    function addEva_1() {
+        document.getElementById("course_list_eva").addEventListener("click", function (event) {
+
+            sid = event.target.id;
+            for (let i = 0; i < studentsEva.result.length; i++) {
+                if (sid === studentsEva.result[i].sid) {
+                    sname = studentsEva.result[i].sname;
+                    tid = studentsEva.result[i].tid;
+                    cid = studentsEva.result[i].cid;
+                    cname = studentsEva.result[i].cname;
+                    evalulation = studentsEva.result[i].evaluation;
+                    suggestion = studentsEva.result[i].suggestion;
+
+
+                    $("#sname_update").val(sname);
+                    $('#sname_update').attr("readonly", "readonly");
+                    $("#cname_update").val(cname);
+                    $('#cname_update').attr("readonly", "readonly");
+                    $('#evaluation_update').val(evalulation);
+                    $('#suggestion_update').val(suggestion);
+                }
+            }
+        })
+    }
+
+    function addEvaluation() {
+        let evaluation = document.getElementById("evaluation").value;
+        let suggestion = document.getElementById("suggestion").value;
+
+        $.ajax({
+            url: 'http://localhost:3000/teacher/addEvaluation',
+            type: 'post',
+            datatype: 'jsonp',
+            data: {
+                sid: sid,
+                cid: cid,
+                tid: tid,
+                evaluation: evaluation,
+                suggestion: suggestion
+            },
+            crossDomain: true,
+            success: function (data, status, xhr) {
+                students = data;
+                console.log(data);
+                let list = "";
+                if (status === "success") {
+                    history.go();
+                }
+            }
+        });
+    }
+
+    function updateEvaluation() {
+        let evaluation = document.getElementById("evaluation_update").value;
+        let suggestion = document.getElementById("suggestion_update").value;
+
+        $.ajax({
+            url: 'http://localhost:3000/teacher/updateEvaluation',
+            type: 'post',
+            datatype: 'jsonp',
+            data: {
+                sid: sid,
+                cid: cid,
+                tid: tid,
+                evaluation: evaluation,
+                suggestion: suggestion
+            },
+            crossDomain: true,
+            success: function (data, status, xhr) {
+                students = data;
+                console.log(data);
+                let list = "";
+                if (status === "success") {
+                    history.go()
+                }
+            }
+        });
+    }
+
+
+</script>
+<body>
+<div id="throbber" style="display:none; min-height:120px;"></div>
+<div id="noty-holder"></div>
+
+<div id="wrapper">
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <i class="fa fa-bars" aria-hidden="true" style="color: white;"></i>
+            </button>
+            <div class="navbar-brand">
+            </div>
+        </div>
+
+        <form action="" class="navbar-form navbar-left">
+            <div class="input-group">
+                <div class="input-group-btn">
+                    <button class="btn  search-btn-icon">
+                        <i class="fa fa-search" aria-hidden="true"></i>
+                    </button>
+                </div>
+                <input type="Search" placeholder="Search..." class="form-control-serch search-box"/>
+            </div>
+        </form>
+
+        <!-- Top Menu Items -->
+        <div class="items">
+            <ul class="nav navbar-right top-nav">
+                <li class="editpro">
+                    <i class="fasett fa-cog" aria-hidden="true" class="menu-button" id="menu-button"></i>
+                    <h5 class="pull-left login-person-head">Welcome WaLiA SaAB</h5>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
+        <div class="collapse navbar-collapse navbar-ex1-collapse"
+             style="background-color: #616060; border:1px solid #616060;">
+            <ul class="nav navbar-nav side-nav">
+                <a href="#"><img class="logostyle"
+                                 src="https://vignette.wikia.nocookie.net/nationstates/images/2/29/WS_Logo.png/revision/latest?cb=20080507063620"
+                                 alt="LOGO"></a>
+                <li>
+                    <a class="#" href="#" data-toggle="collapse" data-target="#submenu-1"><i class="fa fa-home"
+                                                                                             aria-hidden="true"></i>
+                          <span style="color:white;">  Home </span></a>
+                </li>
+                <li>
+                    <a class="#" href="./teacherCourse.html" data-toggle="collapse" data-target="#submenu-1"><i
+                            class="fa fa-user-o"
+                            aria-hidden="true"></i>  
+                        <span style="color:white;">  我的教学 </span></a>
+                </li>
+                <li>
+                    <a class="active" href="./trackLearning.html" data-toggle="collapse" data-target="#submenu-1"><i
+                            class="fa fa-calendar"
+                            aria-hidden="true"></i>  
+                        <span style="color:white;"> 我的学生 </span></a>
+                </li>
+                <li>
+                    <a class="#" href="./setting.html" data-toggle="collapse" data-target="#submenu-1"><i
+                            class="fa fa-envelope"
+                            aria-hidden="true"></i> 
+                        <span style="color:white;"> setting </span></a>
+                </li>
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row course_style">
+            <div class="col-md-12 dashhead">
+                <h1 class="text-center"> Welcome To setting</h1>
+                <br>
+                <h4>共 <span id="total"></span> 名学生选课</h4>
+                <h3>未评价学生</h3>
+                <div id="course_list" class="bookList">
+
+                </div>
+                <hr>
+                <h3>已评价学生</h3>
+                <div id="course_list_eva" class="bookList">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- evaluationStuModel -->
+    <div class="modal fade" id="evaluationStuModel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel_add">
+        <div class="modal-dialog" role="document" style="width:400px">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">ADD</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+
+                        <label class="control-label">学生</label>
+
+                        <input id="sname" type="text" name="password" class="form-control"/>
+
+                    </div>
+                    <div class="form-group">
+
+                        <label class="control-label">课程名称</label>
+
+                        <input id="cname" type="text" name="password" class="form-control"/>
+                    </div>
+                    <div class="form-group">
+
+                        <label class="control-label">老师评价</label>
+
+                        <textarea id="evaluation" name="password" class="form-control"></textarea>
+                    </div>
+                    <div class="form-group">
+
+                        <label class="control-label">建议</label>
+
+                        <textarea id="suggestion" name="password" class="form-control"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <span id="warning_add" style="color: red"></span>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick=addEvaluation()>Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- updateEvaluationStuModel -->
+    <div class="modal fade" id="updateEvaluationStuModel" tabindex="-1" role="dialog"
+         aria-labelledby="myModalLabel_add">
+        <div class="modal-dialog" role="document" style="width:400px">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel2">ADD</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+
+                        <label class="control-label">学生</label>
+
+                        <input id="sname_update" type="text" name="password" class="form-control"/>
+
+                    </div>
+                    <div class="form-group">
+
+                        <label class="control-label">课程名称</label>
+
+                        <input id="cname_update" type="text" name="password" class="form-control"/>
+                    </div>
+                    <div class="form-group">
+
+                        <label class="control-label">老师评价</label>
+
+                        <textarea id="evaluation_update" name="password" class="form-control"></textarea>
+                    </div>
+                    <div class="form-group">
+
+                        <label class="control-label">建议</label>
+
+                        <textarea id="suggestion_update" name="password" class="form-control"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <span id="warning_update" style="color: red"></span>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick=updateEvaluation()>Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div><!-- /#wrapper -->
 </body>
 </html>

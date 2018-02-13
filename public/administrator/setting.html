@@ -4,12 +4,15 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css">
 
+    <link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <title>setting</title>
 </head>
 <style>
     body {
         font-family: 'lato' !important;
-        background-color: white;
+        background-color: #eee;
     }
 
     /*navbar start*/
@@ -178,11 +181,127 @@
             margin-top: 180px;
         }
     }
+
+    #list_info {
+        margin-left: 50px;
+    }
+
+    #jiben_1, #zhanghu_1, #updatepass_1 {
+        margin-left: 50px;
+    }
+
+    .course_style {
+        background: white;
+        margin-top: 50px;
+        width: 900px;;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
 </style>
+<script>
+    let users;
+    let uid = sessionStorage.getItem("id");
+    window.onload = function () {
+        $.ajax({
+            url: 'http://localhost:3000/user/searchAdmin',
+            type: 'post',
+            datatype: 'jsonp',
+            data: {
+                user: uid
+            },
+            crossDomain: true,
+            success: function (data, status, xhr) {
+                users = data;
+                console.log(data);
+                if (status === "success") {
+                    var jiben = document.getElementById("jiben_1");
+                    var zhanghu = document.getElementById("zhanghu_1");
+                    var updatepass = document.getElementById("updatepass_1");
+                    jiben.innerHTML = '<br>姓名：' + data.result[0].name +
+                            '<br><br>性别：' + data.result[0].sex +
+                            '<br><br>出生日期：' + data.result[0].birth +
+                            '<br><br>联系方式：' + data.result[0].tel +
+                            '<br><br>手机：' + data.result[0].phone +
+                            '<br><br>邮箱：' + data.result[0].email +
+                            '<br><br>地址：' + data.result[0].address + '<br><br>';
+
+                    zhanghu.innerHTML = '<br>用户ID：' + data.result[0].uid +
+                            '<br><br>用户名：' + data.result[0].username +
+                            '<br><br>身份：管理员' + '<br><br>';
+
+                    updatepass.innerHTML = '<br>密码：' + data.result[0].password + '&nbsp;&nbsp;&nbsp;<button class="btn" id="update" onclick=updatepassword()>修改</button>'
+
+                }
+            }
+        });
+
+
+        var jiben_1 = document.getElementById("jiben_1");
+        var jiben = document.getElementById("jiben");
+        jiben.onclick = function () {
+            if (jiben_1.style.display == "none") {
+                jiben_1.style.display = "block";
+            } else {
+                jiben_1.style.display = "none";
+            }
+        };
+
+        var zhanghu_1 = document.getElementById("zhanghu_1");
+        var zhanghu = document.getElementById("zhanghu");
+        zhanghu.onclick = function () {
+            if (zhanghu_1.style.display == "none") {
+                zhanghu_1.style.display = "block";
+            } else {
+                zhanghu_1.style.display = "none";
+            }
+        };
+
+        var updatepass_1 = document.getElementById("updatepass_1");
+        var updatepass = document.getElementById("updatepass");
+        updatepass.onclick = function () {
+            if (updatepass_1.style.display == "none") {
+                updatepass_1.style.display = "block";
+            } else {
+                updatepass_1.style.display = "none";
+            }
+        }
+    }
+
+    function updatepassword() {
+        document.getElementById("updatepass_1").innerHTML = '<input type="text" id="pass" value="">' +
+                '&nbsp;&nbsp;&nbsp;<button class="btn" onclick=editpassword()>修改</button>'
+    }
+
+    var password;
+
+    function editpassword() {
+        uid = users.result[0].uid;
+        password = document.getElementById("pass").value;
+        $.ajax({
+            url: 'http://localhost:3000/user/updatepass',
+            type: 'post',
+            datatype: 'jsonp',
+            crossDomain: true,
+            data: {
+                uid,
+                password
+            },
+            success: function (data, status, xhr) {
+                console.log(data);
+                if (status === "success" && data.status === 1) {
+                    history.go(0)
+                } else {
+                    document.getElementById("warning").innerHTML = "修改失败！"
+                }
+            }
+        });
+    }
+
+</script>
 <body>
 <div id="throbber" style="display:none; min-height:120px;"></div>
 <div id="noty-holder"></div>
-
 
 <div id="wrapper">
 
@@ -268,9 +387,21 @@
     </nav>
 
     <div class="container-fluid">
-        <div class="row text-center">
+        <div class="row course_style">
             <div class="col-md-12 dashhead">
-                <h1> Welcome To My ProFile</h1>
+                <h1 class="text-center"> Welcome To setting</h1>
+                <div id="list_info">
+                    <h3 id="jiben">基本信息</h3>
+                    <div id="jiben_1" style="display:none">1111</div>
+
+                    <h3 id="zhanghu">账户信息</h3>
+                    <div id="zhanghu_1" style="display:none">2222</div>
+
+
+                    <h3 id="updatepass">修改密码</h3>
+                    <div id="updatepass_1" style="display:none">2222</div>
+                    <span id="warning" style="color: red;;"></span>
+                </div>
             </div>
         </div>
     </div>

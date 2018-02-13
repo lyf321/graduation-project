@@ -13,6 +13,7 @@ const updateCourse = require("../helpers/course/updateCourse");
 const deleteCourse = require("../helpers/course/deleteCourse");
 const addCourse = require("../helpers/course/addCourse");
 const searchCourse = require("../helpers/course/searchCourse");
+const searchStu = require("../helpers/course/searchStu");
 
 Router.use('/getAll', function (req, res) {
 
@@ -45,6 +46,13 @@ Router.use('/deleteCourse', function (req, res) {
 Router.use('/searchCourse', function (req, res) {
 
     searchCourse(req.body, function (result, err) {
+        res.send({result: result.results, status: result.status})
+    })
+});
+
+Router.use('/searchStu', function (req, res) {
+
+    searchStu(req.body, function (result, err) {
         res.send({result: result.results, status: result.status})
     })
 });

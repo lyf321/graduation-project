@@ -101,9 +101,16 @@
             },
             success: function (data, status, xhr) { // 接口调用成功回调函数
                 if (status === "success" && data.status === 1) {
-                    document.getElementById("warning").innerHTML = "";
-
-
+                    document.getElementById("warning").innerHTML = " 登录成功";
+                    sessionStorage.setItem("user", username);
+                    sessionStorage.setItem("id", data.id);
+                    if (data.identity === 1) {
+                        window.location.href = "../administrator/class.html"
+                    } else if (data.identity === 2) {
+                        window.location.href = "../teacher/teacherCourse.html"
+                    } else {
+                        window.location.href = "../student/myCourse.html"
+                    }
                 } else {
                     document.getElementById("warning").innerHTML = " 用户名或密码错误"
                 }
@@ -150,14 +157,14 @@
                 </div>
 
                 <input type="checkbox"> Remember me
-                <span id="warning"></span>
+                <span id="warning" style="color: red"></span>
                 <div class="form-group ">
                     <button type="button" class="btn btn-primary btn-lg btn-block login-button" id="login"
                             onclick=loginIn()>Login
                     </button>
                 </div>
                 <div class="login-register">
-                    <a href="../index.html">Register</a>
+                    <a href="./register.html">Register</a>
                 </div>
             </form>
         </div>

@@ -310,12 +310,25 @@
                         alert("删除成功！");
                         history.go(0)
                     } else {
-                        alert("删除失败！");
+                        alert("删除失败，老师还有课程没有结束！");
                     }
                 }
             });
         });
 
+    }
+
+    function getTid() {
+        var rnd = "t";
+        for (var i = 0; i < 3; i++) {
+            rnd += Math.floor(Math.random() * 10);
+        }
+        return rnd;
+    }
+
+    function getNewTid() {
+        $("#tid_add").val(getTid());
+        $('#tid_add').attr("readonly", "readonly");
     }
 
     function addTeacher() {
@@ -487,7 +500,7 @@
             <div class="col-md-12 dashhead">
                 <h1> Welcome To teacher</h1>
                 <button class="glyphicon glyphicon-plus" data-toggle="modal" data-target="#addTeacherModel"
-                        id="addModel"></button>
+                        id="addModel" onclick=getNewTid()></button>
 
                 <table class="table table-striped" id="mytable">
                     <tbody>

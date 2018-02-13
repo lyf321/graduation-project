@@ -185,6 +185,8 @@
 </style>
 <script type="text/javascript">
     var courses;
+    var teachers;
+    let option = "";
     window.onload = function () {
         $.ajax({
             url: 'http://localhost:3000/course/getAll',
@@ -226,6 +228,19 @@
                 }
             }
         });
+        $.ajax({
+            url: 'http://localhost:3000/teacher/getAll',
+            type: 'get',
+            datatype: 'jsonp',
+            crossDomain: true,
+            success: function (data, status, xhr) {
+                teachers = data;
+
+                for (let i = 0; i < teachers.result.length; i++) {
+                    option += '<option value="' + teachers.result[i].tid + '">' + teachers.result[i].tid + " (" + teachers.result[i].tname + ')</option>'
+                }
+            }
+        });
     };
 
     var id;
@@ -238,6 +253,13 @@
     var cintroduce;
 
     function editCourse() {
+        let select = '<span style="margin-left:172px;width:18px;overflow:hidden">' +
+                '<select style="width:190px" id="tid" ' +
+                'onchange="this.parentNode.nextSibling.value=this.value" ' +
+                'class="form-control"> ' + option
+        '</select> </span>';
+        document.getElementById("teacher_id_edit").innerHTML = select;
+
         $("tr").click(function () {
             id = $(this).attr("id");
             cid = courses.result[id].cid;
@@ -319,6 +341,15 @@
 
     }
 
+    function addTeacherSelect() {
+        let select = '<span style="margin-left:172px;width:18px;overflow:hidden">' +
+                '<select style="width:190px" id="tid_add" ' +
+                'onchange="this.parentNode.nextSibling.value=this.value" ' +
+                'class="form-control"> ' + option
+        '</select> </span>';
+        document.getElementById("teacher_id_add").innerHTML = select;
+    }
+
     function addCourse() {
         var cid_add = document.getElementById("cid_add").value;
         var cname_add = document.getElementById("cname_add").value;
@@ -386,7 +417,7 @@
                     document.getElementById("mytable").innerHTML = cour;
                 }
                 else {
-                    document.getElementById("").innerHTML = "";
+                    document.getElementById("mytable").innerHTML = "什么也没有查到！";
                 }
             }
         });
@@ -487,7 +518,8 @@
             <div class="col-md-12 dashhead">
 
                 <h1>Welcome To course </h1>
-                <button class="glyphicon glyphicon-plus" data-toggle="modal" data-target="#addCourseModel"></button>
+                <button class="glyphicon glyphicon-plus" data-toggle="modal" data-target="#addCourseModel"
+                        onclick=addTeacherSelect()></button>
 
                 <table class="table table-striped" id="mytable">
                     <tbody>
@@ -535,13 +567,23 @@
 
                         <label class="control-label">教师ID</label>
 
-                        <input id="tid_add" type="text" name="password" class="form-control"/>
+                        <div id="teacher_id_add"></div>
+
+                        <!--<input id="tid_add" type="text" name="password" class="form-control"/>-->
                     </div>
                     <div class="form-group">
 
                         <label class="control-label">课程类型</label>
-
-                        <input id="ctype_add" type="text" name="password" class="form-control"/>
+                        <span style="margin-left:172px;width:18px;overflow:hidden">
+                        <select style="width:190px" id="ctype_add"
+                                onchange="this.parentNode.nextSibling.value=this.value" class="form-control">
+                            <option value="math">数学</option>
+                            <option value="english">英语</option>
+                            <option value="chinese">语文</option>
+                            <option value="computer">计算机</option>
+                            <option value="code">编程</option>
+                        </select>
+                        </span>
                     </div>
                     <div class="form-group">
 
@@ -599,7 +641,7 @@
 
                         <label class="control-label">教师ID</label>
 
-                        <input id="tid" type="text" name="password" class="form-control"/>
+                        <div id="teacher_id_edit"></div>
                     </div>
                     <div class="form-group">
 
@@ -611,7 +653,16 @@
 
                         <label class="control-label">课程类型</label>
 
-                        <input id="ctype" type="text" name="password" class="form-control"/>
+                        <span style="margin-left:172px;width:18px;overflow:hidden">
+                        <select style="width:190px" id="ctype"
+                                onchange="this.parentNode.nextSibling.value=this.value" class="form-control">
+                            <option value="math">数学</option>
+                            <option value="english">英语</option>
+                            <option value="chinese">语文</option>
+                            <option value="computer">计算机</option>
+                            <option value="code">编程</option>
+                        </select>
+                        </span>
                     </div>
                     <div class="form-group">
 

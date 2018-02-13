@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css">
 
+    <link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <title>employee</title>
 </head>
 <style>
@@ -179,6 +182,175 @@
         }
     }
 </style>
+<script>
+    let users;
+    window.onload = function () {
+        $.ajax({
+            url: 'http://localhost:3000/user/getAll',
+            type: 'get',
+            datatype: 'jsonp',
+            crossDomain: true,
+            success: function (data, status, xhr) {
+                users = data;
+                console.log(data)
+                if (status === "success") {
+                    var tb = document.getElementById("mytable");
+                    for (var i = 0; i < data.result.length; i++) {
+                        var tr = tb.insertRow();
+                        tr.setAttribute("id", i);
+                        var td1 = tr.insertCell(0);
+                        var td2 = tr.insertCell(1);
+                        var td3 = tr.insertCell(2);
+                        var td4 = tr.insertCell(3);
+                        var td5 = tr.insertCell(4);
+                        td1.innerText = data.result[i].uid;
+                        td2.innerText = data.result[i].username;
+                        td3.innerText = data.result[i].password;
+                        if (data.result[i].identity === 1) {
+                            td4.innerText = "管理员";
+                            td5.innerHTML = '<td class="text-center">' +
+                                    '<a class="btn btn-info btn-xs" data-toggle="modal" data-target="#editUserModel" id=' + data.result[i].tid + ' onclick=editUser()>' +
+                                    '<span class="glyphicon glyphicon-edit"></span> Edit</a> '
+                        } else if (data.result[i].identity === 2) {
+                            td4.innerText = "老师";
+                            td5.innerHTML = '<td class="text-center">' +
+                                    '<a class="btn btn-info btn-xs" data-toggle="modal" data-target="#editUserModel" id=' + data.result[i].tid + ' onclick=editUser()>' +
+                                    '<span class="glyphicon glyphicon-edit"></span> Edit</a> ' +
+                                    '<a class="btn btn-danger btn-xs" onclick=deleteUser()>' +
+                                    '<span class="glyphicon glyphicon-remove"></span> Del</a>'
+                        } else {
+                            td4.innerText = "学生";
+                            td5.innerHTML = '<td class="text-center">' +
+                                    '<a class="btn btn-info btn-xs" data-toggle="modal" data-target="#editUserModel" id=' + data.result[i].tid + ' onclick=editUser()>' +
+                                    '<span class="glyphicon glyphicon-edit"></span> Edit</a> ' +
+                                    '<a class="btn btn-danger btn-xs" onclick=deleteUser()>' +
+                                    '<span class="glyphicon glyphicon-remove"></span> Del</a>'
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    var uid;
+    var username;
+    var password;
+    var identity;
+
+    function editUser() {
+        $("tr").click(function () {
+            id = $(this).attr("id");
+            uid = users.result[id].uid;
+            username = users.result[id].username;
+            password = users.result[id].password;
+            identity = users.result[id].identity;
+
+            $("#uid").val(uid);
+            $('#uid').attr("readonly", "readonly");
+            $("#username").val(username);
+            $("#password").val(password);
+            if (identity === 1) {
+                $("#identity").val("管理员");
+            } else if (identity === 2) {
+                $("#identity").val("老师");
+            } else {
+                $("#identity").val("学生");
+            }
+
+            $('#identity').attr("readonly", "readonly");
+
+        });
+    }
+
+    function updateUser() {
+        var uid = document.getElementById("uid").value;
+        var username = document.getElementById("username").value;
+        var password = document.getElementById("password").value;
+
+        $.ajax({
+            url: 'http://localhost:3000/user/updateUser',
+            type: 'post',
+            datatype: 'jsonp',
+            crossDomain: true,
+            data: {
+                uid,
+                username,
+                password
+            },
+            success: function (data, status, xhr) {
+                console.log(data);
+                if (status === "success" && data.status === 1) {
+                    history.go(0)
+                } else {
+                    document.getElementById("warning").innerHTML = "您输入的信息有误"
+                }
+            }
+        });
+
+    }
+
+    function deleteUser() {
+        $("tr").click(function () {
+            id = $(this).attr("id");
+            uid = users.result[id].uid;
+
+            $.ajax({
+                url: 'http://localhost:3000/user/deleteUser',
+                type: 'get',
+                datatype: 'jsonp',
+                crossDomain: true,
+                data: {
+                    uid: uid
+                },
+                success: function (data, status, xhr) {
+                    console.log(data);
+                    if (status === "success" && data.status === 1) {
+                        alert("删除成功！");
+                        history.go(0)
+                    } else {
+                        alert("删除失败！");
+                    }
+                }
+            });
+        });
+
+    }
+
+    function searchUser() {
+        var search = document.getElementById("search").value;
+        $.ajax({
+            url: 'http://localhost:3000/user/searchUser',
+            type: 'post',
+            crossDomain: true,
+            data: {
+                search: search
+            },
+            success: function (data, status, xhr) {
+                teachers = data;
+                var cour = "";
+                cour += '<tr> <td>用户ID</td> <td>用户名</td> <td>密码</td><td>身份</td><td>action</td></tr>';
+                if (status === "success" && data.status === 1) {
+                    for (var i = 0; i < data.result.length; i++) {
+                        cour += '<tr id=' + i + '> <td>' + data.result[i].uid + '</td>' +
+                                '<td>' + data.result[i].username + '</td>' +
+                                ' <td>' + data.result[i].password + '</td> ' +
+                                '<td>' + data.result[i].identity + '</td> ' +
+                                '<td class="text-center">' +
+                                '<a class="btn btn-info btn-xs" data-toggle="modal" data-target="#editUserModel" id=' + data.result[i].tid + ' onclick=editUser()>' +
+                                '<span class="glyphicon glyphicon-edit"></span> Edit</a> ' +
+                                '<a class="btn btn-danger btn-xs" onclick=deleteUser()>' +
+                                '<span class="glyphicon glyphicon-remove"></span> Del</a>'
+                    }
+                    document.getElementById("mytable").innerHTML = cour;
+                }
+                else {
+                    document.getElementById("mytable").innerHTML = "查询不到任何信息";
+                }
+            }
+        });
+    }
+
+</script>
 <body>
 <div id="throbber" style="display:none; min-height:120px;"></div>
 <div id="noty-holder"></div>
@@ -198,16 +370,17 @@
             </div>
         </div>
 
-        <form action="" class="navbar-form navbar-left">
+        <div action="" class="navbar-form navbar-left">
             <div class="input-group">
                 <div class="input-group-btn">
                     <button class="btn  search-btn-icon">
                         <i class="fa fa-search" aria-hidden="true"></i>
                     </button>
                 </div>
-                <input type="Search" placeholder="Search..." class="form-control-serch search-box"/>
+                <input type="Search" placeholder="Search..." class="form-control-serch search-box"
+                       id="search" onsearch="searchUser()"/>
             </div>
-        </form>
+        </div>
 
         <!-- Top Menu Items -->
         <div class="items">
@@ -271,7 +444,64 @@
     <div class="container-fluid">
         <div class="row text-center">
             <div class="col-md-12 dashhead">
-                <h1> Welcome To My ProFile</h1>
+                <h1> Welcome To employee</h1>
+
+                <table class="table table-striped" id="mytable">
+                    <tbody>
+                    <tr>
+                        <td>用户ID</td>
+                        <td>用户名</td>
+                        <td>密码</td>
+                        <td>身份</td>
+                        <td>action</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- editUser_Modal -->
+    <div class="modal fade" id="editUserModel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document" style="width:400px">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">EDIT</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+
+                        <label class="control-label">用户ID</label>
+
+                        <input id="uid" type="text" class="form-control"/>
+
+                    </div>
+                    <div class="form-group">
+
+                        <label class="control-label">用户名</label>
+
+                        <input id="username" type="text" class="form-control"/>
+                    </div>
+                    <div class="form-group">
+
+                        <label class="control-label">密码</label>
+
+                        <input id="password" type="text" class="form-control"/>
+                    </div>
+                    <div class="form-group">
+
+                        <label class="control-label">身份</label>
+
+                        <input id="identity" type="text" class="form-control"/>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <span id="warning" style="color: red"></span>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick=updateUser()>Save changes</button>
+                </div>
             </div>
         </div>
     </div>

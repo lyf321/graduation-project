@@ -17,51 +17,60 @@ module.exports = function (data, callback) {
         "courses.cproperty,teachers.tid,teachers.tname " +
         "FROM courses,teachers where teachers.tid=courses.tid";
 
-    conn.query(sql1, function (err, results, fields) {
-        if (err) {
-            console.log("错误");
-            callback({status: 0});
-        } else {
-            if (results.length > 0) {
-                callback({results: results, status: 1});
+    if (data.search === "") {
+        conn.query(sql4, function (err, results, fields) {
+            if (err) {
+                console.log("错误");
+                callback({status: 0});
             } else {
-
-                conn.query(sql2, function (err, results, fields) {
-                    if (err) {
-                        console.log("错误");
-                        callback({status: 0});
-                    } else {
-                        if (results.length > 0) {
-                            callback({results: results, status: 1});
-                        } else {
-
-                            conn.query(sql3, function (err, results, fields) {
-                                if (err) {
-                                    console.log("错误");
-                                    callback({status: 0});
-                                } else {
-                                    if (results.length > 0) {
-                                        callback({results: results, status: 1});
-                                    } else {
-                                        conn.query(sql4, function (err, results, fields) {
-                                            if (err) {
-                                                console.log("错误");
-                                                callback({status: 0});
-                                            } else {
-                                                if (results.length > 0) {
-                                                    callback({results: results, status: 1});
-                                                } else {
-                                                    callback({status: 0});
-                                                }
-                                            }
-                                        });
-                                    }
-                                }
-                            });
-                        }
-                    }
-                });
+                if (results.length > 0) {
+                    callback({results: results, status: 1});
+                } else {
+                    callback({status: 0});
+                }
             }
-        }
-    });
+        });
+    } else {
+        conn.query(sql1, function (err, results, fields) {
+            if (err) {
+                console.log("错误");
+                callback({status: 0});
+            } else {
+                if (results.length > 0) {
+                    callback({results: results, status: 1});
+                } else {
+
+                    conn.query(sql2, function (err, results, fields) {
+                        if (err) {
+                            console.log("错误");
+                            callback({status: 0});
+                        } else {
+                            if (results.length > 0) {
+                                callback({results: results, status: 1});
+                            } else {
+
+                                conn.query(sql3, function (err, results, fields) {
+                                    if (err) {
+                                        console.log("错误");
+                                        callback({status: 0});
+                                    } else {
+                                        if (results.length > 0) {
+                                            callback({results: results, status: 1});
+                                        } else {
+                                            if (results.length > 0) {
+                                                callback({results: results, status: 1});
+                                            } else {
+                                                callback({status: 0});
+                                            }
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    }
+
 };

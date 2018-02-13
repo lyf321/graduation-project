@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css">
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
     <title>personnel management</title>
 </head>
 <style>
@@ -177,7 +179,15 @@
             margin-top: 180px;
         }
     }
+
+    #course_list {
+        margin-left: 50px;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        grid-auto-rows: 250px;
+    }
 </style>
+
 <body>
 <div id="throbber" style="display:none; min-height:120px;"></div>
 <div id="noty-holder"></div>
@@ -226,8 +236,9 @@
                                  src="https://vignette.wikia.nocookie.net/nationstates/images/2/29/WS_Logo.png/revision/latest?cb=20080507063620"
                                  alt="LOGO"></a>
                 <li>
-                    <a class="active" href="./personnel_management.html" data-toggle="collapse" data-target="#submenu-1"><i class="fa fa-home"
-                                                                                                  aria-hidden="true"></i>
+                    <a class="active" href="./personnel_management.html" data-toggle="collapse"
+                       data-target="#submenu-1"><i class="fa fa-home"
+                                                   aria-hidden="true"></i>
                           <span style="color:white;">  Home </span></a>
                 </li>
                 <li>
@@ -257,9 +268,9 @@
 
                 <li>
                     <a class="#" href="./setting.html" data-toggle=" collapse" data-target="#submenu-1"><i
-                        class="fa fa-cogs"
-                        aria-hidden="true"></i>  
-                    <span style="color:white;"> Settings </span></a>
+                            class="fa fa-cogs"
+                            aria-hidden="true"></i>  
+                        <span style="color:white;"> Settings </span></a>
                 </li>
             </ul>
         </div>
@@ -269,11 +280,160 @@
     <div class="container-fluid">
         <div class="row text-center">
             <div class="col-md-12 ">
-                <h1> Welcome To </h1>
+                <h1> Welcome To Home</h1>
+                <div id="course_list" class="bookList">
+                    <div id="employee">
+                        <br>
+                        <div>员工分布</div>
+                    </div>
+                    <div id="course">
+                        <br>
+                        <div>课程分布</div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
 </div><!-- /#wrapper -->
 </body>
+<script>
+    var width = 400;
+    var height = 400;
+
+    window.onload = function () {
+        let course_ctype_num = [];
+
+        let employee_num = [{type: "管理员", num: 0}, {type: "老师", num: 0}, {type: "学生", num: 0}];
+        $.ajax({
+            url: 'http://localhost:3000/user/getAll',
+            type: 'get',
+            datatype: 'jsonp',
+            crossDomain: true,
+            success: function (data, status, xhr) {
+                for (let i = 0; i < data.result.length; i++) {
+                    if (data.result[i].identity === 1) {
+                        employee_num[0].num++;
+                    } else if (data.result[i].identity === 2) {
+                        employee_num[1].num++;
+                    } else {
+                        employee_num[2].num++;
+                    }
+                }
+
+                //员工
+                var svg = d3.select("#employee")
+                        .append("svg")
+                        .attr("width", width)
+                        .attr("height", height);
+
+                var pie = d3.layout.pie().value(function (d) {
+                    return d.num;
+                });
+
+                var outerRadius = 150;	//外半径
+                var innerRadius = 0;	//内半径，为0则中间没有空白
+
+                var arc = d3.svg.arc()	//弧生成器
+                        .innerRadius(innerRadius)	//设置内半径
+                        .outerRadius(outerRadius);	//设置外半径
+
+                var color = d3.scale.category10();
+
+                var arcs = svg.selectAll("g")
+                        .data(pie(employee_num))
+                        .enter()
+                        .append("g")
+                        .attr("transform", "translate(" + (width / 2) + "," + (width / 2) + ")");
+
+                arcs.append("path")
+                        .attr("fill", function (d, i) {
+                            return color(i);
+                        })
+                        .attr("d", function (d) {
+                            return arc(d);
+                        });
+
+                arcs.append("text")
+                        .attr("transform", function (d) {
+                            return "translate(" + arc.centroid(d) + ")";
+                        })
+                        .attr("text-anchor", "middle")
+                        .text(function (d) {
+                            return d.data.type;
+                        });
+            }
+        });
+
+        $.ajax({
+            url: 'http://localhost:3000/course/getAll',
+            type: 'get',
+            datatype: 'jsonp',
+            crossDomain: true,
+            success: function (data, status, xhr) {
+
+                if (status === "success") {
+
+                    for (let i = 0; i < data.result.length; i++) {
+                        if (course_ctype_num.length === 0) {
+                            course_ctype_num[0] = {name: data.result[i].ctype};
+                            course_ctype_num[0].num = 1;
+                        } else {
+                            for (let j = 0; j < course_ctype_num.length; j++) {
+                                if (data.result[i].ctype === course_ctype_num[j].name) {
+                                    course_ctype_num[j].num++;
+                                } else {
+                                    course_ctype_num[j + 1] = {name: data.result[i].ctype};
+                                    course_ctype_num[j + 1].num = 1;
+                                }
+                            }
+                        }
+                    }
+                    var svg = d3.select("#course")
+                            .append("svg")
+                            .attr("width", width)
+                            .attr("height", height);
+
+                    var pie = d3.layout.pie().value(function (d) {
+                        return d.num;
+                    });
+
+                    var outerRadius = 150;	//外半径
+                    var innerRadius = 50;	//内半径，为0则中间没有空白
+
+                    var arc = d3.svg.arc()	//弧生成器
+                            .innerRadius(innerRadius)	//设置内半径
+                            .outerRadius(outerRadius);	//设置外半径
+
+                    var color = d3.scale.category10();
+
+                    var arcs = svg.selectAll("g")
+                            .data(pie(course_ctype_num))
+                            .enter()
+                            .append("g")
+                            .attr("transform", "translate(" + (width / 2) + "," + (width / 2) + ")");
+
+                    arcs.append("path")
+                            .attr("fill", function (d, i) {
+                                console.log(d)
+                                return color(i);
+                            })
+                            .attr("d", function (d) {
+                                console.log("d", d)
+                                return arc(d);
+                            });
+
+                    arcs.append("text")
+                            .attr("transform", function (d) {
+                                return "translate(" + arc.centroid(d) + ")";
+                            })
+                            .attr("text-anchor", "middle")
+                            .text(function (d) {
+                                return d.data.name;
+                            });
+                }
+            }
+        });
+    };
+</script>
 </html>

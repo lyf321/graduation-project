@@ -233,6 +233,14 @@
     var saddress;
     var snumber;
 
+    function getSid() {
+        var rnd = "s";
+        for (var i = 0; i < 3; i++) {
+            rnd += Math.floor(Math.random() * 10);
+        }
+        return rnd;
+    }
+
     function editStudent() {
         $("tr").click(function () {
             id = $(this).attr("id");
@@ -309,12 +317,17 @@
                         alert("删除成功！");
                         history.go(0)
                     } else {
-                        alert("删除失败！");
+                        alert("删除失败，学生还有课程没有结束！");
                     }
                 }
             });
         });
 
+    }
+
+    function getNewSid() {
+        $("#sid_add").val(getSid());
+        $('#sid_add').attr("readonly", "readonly");
     }
 
     function addStudent() {
@@ -385,7 +398,7 @@
                     document.getElementById("mytable").innerHTML = cour;
                 }
                 else {
-                    document.getElementById("mytable").innerHTML = "查询不到任何信息";
+                    document.getElementById("mytable").innerHTML = "查询不到任何信心";
                 }
             }
         });
@@ -485,7 +498,8 @@
         <div class="row text-center">
             <div class="col-md-12 dashhead">
                 <h1> Welcome To student</h1>
-                <button class="glyphicon glyphicon-plus" data-toggle="modal" data-target="#addStudentModel"></button>
+                <button class="glyphicon glyphicon-plus" data-toggle="modal" data-target="#addStudentModel"
+                        onclick=getNewSid()></button>
 
                 <table class="table table-striped" id="mytable">
                     <tbody>
@@ -518,7 +532,7 @@
                 <div class="modal-body">
                     <div class="form-group">
 
-                        <label class="control-label">教师ID</label>
+                        <label class="control-label">学生ID</label>
 
                         <input id="sid_add" type="text" name="password" class="form-control"/>
 
