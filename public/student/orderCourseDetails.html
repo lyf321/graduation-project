@@ -199,9 +199,9 @@
     var course;
     let id = window.location.search.split("=")[1];
     let uid = sessionStorage.getItem("id");
-
+    let avatar = sessionStorage.getItem("avatar");
     window.onload = function () {
-
+        $(".logostyle").attr("src", avatar);
         $.ajax({
             url: 'http://localhost:3000/course/searchCourse',
             type: 'post',
@@ -290,8 +290,8 @@
              style="background-color: #616060; border:1px solid #616060;">
             <ul class="nav navbar-nav side-nav">
                 <a href="#"><img class="logostyle"
-                                 src="https://vignette.wikia.nocookie.net/nationstates/images/2/29/WS_Logo.png/revision/latest?cb=20080507063620"
-                                 alt="LOGO"></a>
+                                 src=""
+                                 alt="LOGO" style="border-radius: 50%"></a>
                 <li>
                     <a class="#" href="#" data-toggle="collapse" data-target="#submenu-1"><i class="fa fa-home"
                                                                                              aria-hidden="true"></i>

@@ -8,7 +8,7 @@ module.exports = function (data, callback) {
     conn.query(sql, function (err, results, fields) {
         if (err) {
             console.log("错误");
-            throw err;
+            callback({status: 0});
         } else {
             if (results.length > 0) {
                 callback({result: results, status: 1});

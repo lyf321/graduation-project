@@ -105,11 +105,11 @@
                     sessionStorage.setItem("user", username);
                     sessionStorage.setItem("id", data.id);
                     if (data.identity === 1) {
-                        window.location.href = "../administrator/class.html"
+                        window.location.href = "../administrator/personnel_management.html"
                     } else if (data.identity === 2) {
-                        window.location.href = "../teacher/teacherCourse.html"
+                        window.location.href = "../teacher/teacher_home.html"
                     } else {
-                        window.location.href = "../student/myCourse.html"
+                        window.location.href = "../student/student_home.html"
                     }
                 } else {
                     document.getElementById("warning").innerHTML = " 用户名或密码错误"

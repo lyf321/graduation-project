@@ -1,5 +1,8 @@
 const express = require('express');
+let multipart = require("connect-multiparty");
 const Router = express.Router();
+let fs = require("fs");
+const path = require('path');
 
 const getAllStudent = require("../helpers/student/getAllStudent");
 const updateStudent = require("../helpers/student/updateStudent");
@@ -10,11 +13,46 @@ const getCourse = require("../helpers/student/getCourse");
 const deleteOrderCourse = require("../helpers/student/deleteCourse");
 const searchStudentBySid = require("../helpers/student/searchStudentBySid");
 const orderCourse = require("../helpers/student/orderCourse");
+const getAvater = require("../helpers/student/getAvater");
+const getEvalulation = require("../helpers/student/getEvaluation");
+const updateAvatar = require("../helpers/student/updateAvatar");
 
 Router.use('/getAll', function (req, res) {
 
     getAllStudent(req.body, function (result, err) {
         res.send({result: result.results})
+    })
+});
+
+Router.use('/getAvater', function (req, res) {
+
+    getAvater(req.body, function (result, err) {
+        res.send({result: result.results, status: result.status})
+    })
+});
+
+Router.post('/updateAvatar', multipart(), function (req, res) {
+
+    console.log(req.files);
+
+    //get filename
+    var filename = req.files.files.originalFilename || path.basename(req.files.files.ws.path);
+    //copy file to a public directory
+    var targetPath = 'public/upload/avatar/' + filename;
+    //copy file
+    fs.createReadStream(req.files.files.path).pipe(fs.createWriteStream(targetPath));
+
+
+    updateAvatar('../upload/avatar/' + filename, req.body.sid, function (result, err) {
+        res.json({code: 200, filepath: '../upload/avatar/' + filename, status: result.status});
+    })
+
+});
+
+Router.use('/getEvalulation', function (req, res) {
+
+    getEvalulation(req.body, function (result, err) {
+        res.send({result: result.results, status: result.status})
     })
 });
 

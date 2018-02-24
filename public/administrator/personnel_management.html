@@ -223,7 +223,7 @@
             <ul class="nav navbar-right top-nav">
                 <li class="editpro">
                     <i class="fasett fa-cog" aria-hidden="true" class="menu-button" id="menu-button"></i>
-                    <h5 class="pull-left login-person-head">Welcome WaLiA SaAB</h5>
+                    <h5 class="pull-left login-person-head" id="user"></h5>
                 </li>
             </ul>
         </div>
@@ -233,8 +233,8 @@
              style="background-color: #616060; border:1px solid #616060;">
             <ul class="nav navbar-nav side-nav">
                 <a href="#"><img class="logostyle"
-                                 src="https://vignette.wikia.nocookie.net/nationstates/images/2/29/WS_Logo.png/revision/latest?cb=20080507063620"
-                                 alt="LOGO"></a>
+                                 src="../upload/avatar/1.png"
+                                 alt="LOGO" style="border-radius: 50%"></a>
                 <li>
                     <a class="active" href="./personnel_management.html" data-toggle="collapse"
                        data-target="#submenu-1"><i class="fa fa-home"
@@ -300,8 +300,9 @@
 <script>
     var width = 400;
     var height = 400;
-
+    let user = sessionStorage.getItem("user");
     window.onload = function () {
+        document.getElementById("user").innerHTML = "Welcome " + user;
         let course_ctype_num = [];
 
         let employee_num = [{type: "管理员", num: 0}, {type: "老师", num: 0}, {type: "学生", num: 0}];
@@ -365,6 +366,29 @@
             }
         });
 
+
+        var CountObj = function (character) {
+            this.num = 1;
+            this.name = character;
+            return this;
+        };
+
+        function createCompareFunction(propertyName) {
+
+            return function (object1, object2) {
+                var value1 = object1.propertyName;
+                var value2 = object2.propertyName;
+
+                if (value1 < value2) {
+                    return -1;
+                } else if (value1 > value2) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            }
+        }
+
         $.ajax({
             url: 'http://localhost:3000/course/getAll',
             type: 'get',
@@ -373,22 +397,29 @@
             success: function (data, status, xhr) {
 
                 if (status === "success") {
-
+                    console.log("code" > "computer");
+                    data.result.sort(createCompareFunction("ctype"));
+                    var arrayObj = null,
+                            countArrayObj = null,
+                            arrayLength = 0,
+                            obj;
                     for (let i = 0; i < data.result.length; i++) {
-                        if (course_ctype_num.length === 0) {
-                            course_ctype_num[0] = {name: data.result[i].ctype};
-                            course_ctype_num[0].num = 1;
-                        } else {
-                            for (let j = 0; j < course_ctype_num.length; j++) {
-                                if (data.result[i].ctype === course_ctype_num[j].name) {
-                                    course_ctype_num[j].num++;
-                                } else {
-                                    course_ctype_num[j + 1] = {name: data.result[i].ctype};
-                                    course_ctype_num[j + 1].num = 1;
-                                }
+                        arrayObj = data.result[i].ctype;
+                        arrayLength = course_ctype_num.length;
+                        if (arrayLength > 0) {
+                            countArrayObj = course_ctype_num[arrayLength - 1];
+                            if (countArrayObj.name === arrayObj) {
+                                countArrayObj.num++;
+                            } else {
+                                course_ctype_num.push(new CountObj(arrayObj));
                             }
+                        } else {
+                            course_ctype_num.push(new CountObj(arrayObj));
                         }
                     }
+
+                    console.log(course_ctype_num)
+
                     var svg = d3.select("#course")
                             .append("svg")
                             .attr("width", width)
@@ -415,11 +446,9 @@
 
                     arcs.append("path")
                             .attr("fill", function (d, i) {
-                                console.log(d)
                                 return color(i);
                             })
                             .attr("d", function (d) {
-                                console.log("d", d)
                                 return arc(d);
                             });
 

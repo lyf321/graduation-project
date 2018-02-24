@@ -201,7 +201,12 @@
 </style>
 <script>
     let users;
+    let user = sessionStorage.getItem("user");
+    let avata = sessionStorage.getItem("avatar");
     window.onload = function () {
+        document.getElementById("user").innerHTML = "Welcome " + user;
+        $(".logostyle").attr("src", avata);
+
         $.ajax({
             url: 'http://localhost:3000/teacher/searchTeacherByTid',
             type: 'post',
@@ -312,25 +317,38 @@
         });
     }
 
-    function updateAvatar() {
-//        $.ajax({
-//            url: 'http://localhost:3000/stuudent/updateAvatar',
-//            type: 'post',
-//            datatype: 'jsonp',
-//            crossDomain: true,
-//            data: {
-//                uid,
-//                password
-//            },
-//            success: function (data, status, xhr) {
-//                console.log(data);
-//                if (status === "success" && data.status === 1) {
-//                    history.go(0)
-//                } else {
-//                    document.getElementById("warning").innerHTML = "修改失败！"
-//                }
-//            }
-//        });
+
+    function uploadImage() {
+        var formData = new FormData($("#frmUploadFile")[0]);
+
+        formData.append("sid", uid);
+
+        console.log(formData);
+
+        $.ajax({
+            url: 'http://localhost:3000/teacher/updateAvatar',
+            type: 'POST',
+            datatype: 'jsonp',
+            async: false,
+            cache: false,
+            contentType: false,
+            processData: false,
+            data: formData,
+            success: function (data) {
+                if (200 === data.code) {
+                    $("#imgShow").attr('src', data.filepath);
+                    $("#spanMessage").html("上传成功");
+                    sessionStorage.setItem("avatar", data.filepath)
+                } else {
+                    $("#spanMessage").html("上传失败");
+                }
+                console.log('imgUploader upload success, data:', data);
+            },
+            error: function (err) {
+                console.log("err", err);
+                $("#spanMessage").html("与服务器通信发生错误");
+            }
+        });
     }
 
 </script>
@@ -368,7 +386,7 @@
             <ul class="nav navbar-right top-nav">
                 <li class="editpro">
                     <i class="fasett fa-cog" aria-hidden="true" class="menu-button" id="menu-button"></i>
-                    <h5 class="pull-left login-person-head">Welcome WaLiA SaAB</h5>
+                    <h5 class="pull-left login-person-head" id="user"></h5>
                 </li>
             </ul>
         </div>
@@ -378,11 +396,12 @@
              style="background-color: #616060; border:1px solid #616060;">
             <ul class="nav navbar-nav side-nav">
                 <a href="#"><img class="logostyle"
-                                 src="https://vignette.wikia.nocookie.net/nationstates/images/2/29/WS_Logo.png/revision/latest?cb=20080507063620"
-                                 alt="LOGO"></a>
+                                 src=""
+                                 alt="LOGO" style="border-radius: 50%"></a>
                 <li>
-                    <a class="#" href="#" data-toggle="collapse" data-target="#submenu-1"><i class="fa fa-home"
-                                                                                             aria-hidden="true"></i>
+                    <a class="#" href="teacher_home.html" data-toggle="collapse" data-target="#submenu-1"><i
+                            class="fa fa-home"
+                            aria-hidden="true"></i>
                           <span style="color:white;">  Home </span></a>
                 </li>
                 <li>
@@ -420,7 +439,17 @@
                     <div id="zhanghu_1" style="display:none">2222</div>
 
                     <h3 id="avatar">修改头像</h3>
-                    <div id="avatar_1" style="display:none">2222</div>
+                    <div id="avatar_1" style="display:none">
+                        <form class="form-horizontal" enctype='multipart/form-data' method='post' action='javascript:;'
+                              role="form"
+                              id="frmUploadFile">
+                            <label class="control-label col-sm-2">上传选择</label>
+                            <input type="file" name="files" class=""/>
+
+                            <button class="btn btn-primary" onClick="uploadImage()">上传</button>
+                            <span class="help-inline" id="spanMessage">选择文件，并上传</span>
+                        </form>
+                    </div>
 
                     <h3 id="updatepass">修改密码</h3>
                     <div id="updatepass_1" style="display:none">2222</div>

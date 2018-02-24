@@ -26,7 +26,12 @@ Router.use('/register', function (req, res) {
 Router.use('/login', function (req, res) {
 
     login(req.body, function (result, err) {
-        res.send({status: result.status, identity: result.result[0].identity, id: result.result[0].uid})
+        console.log(result)
+        if (result.status === 0) {
+            res.send({status: result.status});
+        } else {
+            res.send({status: result.status, identity: result.result[0].identity, id: result.result[0].uid})
+        }
     })
 });
 
@@ -36,7 +41,6 @@ Router.use('/getAll', function (req, res) {
         res.send({result: result.results, status: result.status})
     })
 });
-
 
 Router.use('/deleteUser', function (req, res) {
     let uid = req.param("uid");

@@ -1,9 +1,12 @@
 const conn = require("../../mysql");
 
 module.exports = function (data, callback) {
-    let sql = "select * from students,courses,stu_cour,evaluations where courses.tid = '" + data.tid +
-        "' and evaluations.tid = courses.tid and stu_cour.sid = students.sid and " +
-        "students.sid = evaluations.sid and courses.cid = stu_cour.cid and evaluations.cid = stu_cour.cid";
+
+
+    let sql = "select students.sid,students.sname,courses.cid,courses.cname,courses.tid," +
+        "evaluations.evaluation,evaluations.suggestion from students,courses,evaluations " +
+        "where courses.cid=evaluations.cid and students.sid=evaluations.sid  and" +
+        " courses.tid=evaluations.tid and evaluations.tid = '"+data.tid+"'"
 
     conn.query(sql, function (err, results, fields) {
         if (err) {

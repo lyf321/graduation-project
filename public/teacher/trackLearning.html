@@ -217,7 +217,13 @@
     let students;
     let total = 0;
     let uid = sessionStorage.getItem("id");
+    let user = sessionStorage.getItem("user");
+    let avatar = sessionStorage.getItem("avatar");
+
     window.onload = function () {
+        document.getElementById("user").innerHTML = "Welcome " + user;
+        $(".logostyle").attr("src", avatar);
+
         $.ajax({
             url: 'http://localhost:3000/teacher/searchOrderStudentEvaluation',
             type: 'post',
@@ -227,6 +233,7 @@
             },
             crossDomain: true,
             success: function (data, status, xhr) {
+                console.log(data)
                 studentsEva = data;
                 total += data.result.length;
                 let list_1 = "";
@@ -253,10 +260,9 @@
             crossDomain: true,
             success: function (data, status, xhr) {
                 students = data;
-                console.log(data);
-                let list = "";
-                console.log(status, data.status, studentsEva.status)
+                console.log(data)
                 if (status === "success" && data.status === 1 && studentsEva.status === 1) {
+                    let list = "";
                     for (let j = 0; j < studentsEva.result.length; j++) {
                         for (let i = 0; i < data.result.length; i++) {
 
@@ -276,6 +282,7 @@
                     document.getElementById("course_list").innerHTML = list;
                 } else if (status === "success" && data.status === 1 && studentsEva.status === 0) {
                     total += data.result.length;
+                    let list = "";
                     for (let i = 0; i < data.result.length; i++) {
                         list += '<div> ' +
                                 '<span></span><div class="name">' + data.result[i].sname + '</div>' +
@@ -431,7 +438,7 @@
             <ul class="nav navbar-right top-nav">
                 <li class="editpro">
                     <i class="fasett fa-cog" aria-hidden="true" class="menu-button" id="menu-button"></i>
-                    <h5 class="pull-left login-person-head">Welcome WaLiA SaAB</h5>
+                    <h5 class="pull-left login-person-head" id="user"></h5>
                 </li>
             </ul>
         </div>
@@ -441,10 +448,10 @@
              style="background-color: #616060; border:1px solid #616060;">
             <ul class="nav navbar-nav side-nav">
                 <a href="#"><img class="logostyle"
-                                 src="https://vignette.wikia.nocookie.net/nationstates/images/2/29/WS_Logo.png/revision/latest?cb=20080507063620"
-                                 alt="LOGO"></a>
+                                 src=""
+                                 alt="LOGO" style="border-radius: 50%"></a>
                 <li>
-                    <a class="#" href="#" data-toggle="collapse" data-target="#submenu-1"><i class="fa fa-home"
+                    <a class="#" href="teacher_home.html" data-toggle="collapse" data-target="#submenu-1"><i class="fa fa-home"
                                                                                              aria-hidden="true"></i>
                           <span style="color:white;">  Home </span></a>
                 </li>

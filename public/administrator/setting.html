@@ -202,7 +202,9 @@
 <script>
     let users;
     let uid = sessionStorage.getItem("id");
+    let user = sessionStorage.getItem("user");
     window.onload = function () {
+        document.getElementById("user").innerHTML = "Welcome " + user;
         $.ajax({
             url: 'http://localhost:3000/user/searchAdmin',
             type: 'post',
@@ -333,7 +335,7 @@
             <ul class="nav navbar-right top-nav">
                 <li class="editpro">
                     <i class="fasett fa-cog" aria-hidden="true" class="menu-button" id="menu-button"></i>
-                    <h5 class="pull-left login-person-head">Welcome WaLiA SaAB</h5>
+                    <h5 class="pull-left login-person-head" id="user"></h5>
                 </li>
             </ul>
         </div>
@@ -343,10 +345,10 @@
              style="background-color: #616060; border:1px solid #616060;">
             <ul class="nav navbar-nav side-nav">
                 <a href="#"><img class="logostyle"
-                                 src="https://vignette.wikia.nocookie.net/nationstates/images/2/29/WS_Logo.png/revision/latest?cb=20080507063620"
-                                 alt="LOGO"></a>
+                                 src="../upload/avatar/1.png"
+                                 alt="LOGO" style="border-radius: 50%"></a>
                 <li>
-                    <a class="#" href="#" data-toggle="collapse" data-target="#submenu-1"><i class="fa fa-home"
+                    <a class="#" href="./personnel_management.html" data-toggle="collapse" data-target="#submenu-1"><i class="fa fa-home"
                                                                                              aria-hidden="true"></i>
                           <span style="color:white;">  Home </span></a>
                 </li>
@@ -357,7 +359,7 @@
                         <span style="color:white;">  课程管理 </span></a>
                 </li>
                 <li>
-                    <a class="#" href="./class.html" data-toggle="collapse" data-target="#submenu-1"><i
+                    <a class="#" href="./teacher.html" data-toggle="collapse" data-target="#submenu-1"><i
                             class="fa fa-calendar"
                             aria-hidden="true"></i>  
                         <span style="color:white;"> 教师 </span></a>

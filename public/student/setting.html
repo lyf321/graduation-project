@@ -202,7 +202,13 @@
 <script>
     let users;
     let uid = sessionStorage.getItem("id");
+    let user = sessionStorage.getItem("user");
+    let savatar = sessionStorage.getItem("avatar");
+
     window.onload = function () {
+        document.getElementById("user").innerHTML = "Welcome " + user;
+        $(".logostyle").attr("src", savatar);
+
         $.ajax({
             url: 'http://localhost:3000/student/searchStudentBySid',
             type: 'post',
@@ -213,13 +219,10 @@
             crossDomain: true,
             success: function (data, status, xhr) {
                 users = data;
-                console.log(data);
                 if (status === "success") {
                     var jiben = document.getElementById("jiben_1");
                     var zhanghu = document.getElementById("zhanghu_1");
                     var updatepass = document.getElementById("updatepass_1");
-                    var avatar = document.getElementById("avatar_1");
-                    var evaluation = document.getElementById("evaluation_1");
                     jiben.innerHTML = '<br>姓名：' + data.result[0].sname +
                             '<br><br>性别：' + data.result[0].ssex +
                             '<br><br>年龄：' + data.result[0].sage +
@@ -227,15 +230,12 @@
 //                            '<br><br>联系方式：' + data.result[0].tel +
                             '<br><br>手机：' + data.result[0].snumber +
                             '<br><br>邮箱：' + data.result[0].semail +
-                            '<br><br>地址：' + data.result[0].saddress + '<br><br>';
+                            '<br><br>地址：' + data.result[0].saddress + '<br><br>' +
+                            '&nbsp;&nbsp;&nbsp;<button class="btn" id="editStudent" onclick=editStudent()>修改</button>';
 
                     zhanghu.innerHTML = '<br>用户ID：' + data.result[0].sid +
                             '<br><br>用户名：' + data.result[0].username +
                             '<br><br>身份：学生' + '<br><br>';
-                    avatar.innerHTML = '<input type="file" id="updateAvatar" value="">' +
-                            '<br><button class="btn" onclick=updateAvatar()>修改</button>';
-
-                    evaluation.innerHTML = '很不错，加油';
 
                     updatepass.innerHTML = '<br>密码：' + data.result[0].password + '&nbsp;&nbsp;&nbsp;<button class="btn" id="update" onclick=updatepassword()>修改</button>'
 
@@ -243,6 +243,27 @@
             }
         });
 
+
+        $.ajax({
+            url: 'http://localhost:3000/student/getEvalulation',
+            type: 'post',
+            datatype: 'jsonp',
+            data: {
+                sid: uid
+            },
+            crossDomain: true,
+            success: function (data, status, xhr) {
+                console.log(data);
+                if (status === "success" && data.status === 1) {
+                    var evaluation = "";
+                    for (let i = 0; i < data.result.length; i++) {
+                        evaluation += '课程名称：' + data.result[i].cname + '<br><br>老师：' + data.result[i].tname + '<br><br>' +
+                                '评价：' + data.result[i].evaluation + '<br><br>学习建议：' + data.result[i].suggestion + '<hr>';
+                    }
+                    document.getElementById("evaluation_1").innerHTML = evaluation;
+                }
+            }
+        });
 
         var jiben_1 = document.getElementById("jiben_1");
         var jiben = document.getElementById("jiben");
@@ -273,6 +294,7 @@
                 updatepass_1.style.display = "none";
             }
         }
+
         var avatar_1 = document.getElementById("avatar_1");
         var avatar = document.getElementById("avatar");
         avatar.onclick = function () {
@@ -294,7 +316,7 @@
     }
 
     function updatepassword() {
-        document.getElementById("updatepass_1").innerHTML = '<input type="text" id="pass" value="">' +
+        document.getElementById("updatepass_1").innerHTML = '<input type="text" id="pass" value="" placeholder="请输入新密码" > ' +
                 '&nbsp;&nbsp;&nbsp;<button class="btn" onclick=editpassword()>修改</button>'
     }
 
@@ -323,25 +345,82 @@
         });
     }
 
-    function updateAvatar() {
-//        $.ajax({
-//            url: 'http://localhost:3000/stuudent/updateAvatar',
-//            type: 'post',
-//            datatype: 'jsonp',
-//            crossDomain: true,
-//            data: {
-//                uid,
-//                password
-//            },
-//            success: function (data, status, xhr) {
-//                console.log(data);
-//                if (status === "success" && data.status === 1) {
-//                    history.go(0)
-//                } else {
-//                    document.getElementById("warning").innerHTML = "修改失败！"
-//                }
-//            }
-//        });
+    function editStudent() {
+        document.getElementById("jiben_1").innerHTML = '<br>姓名：' + users.result[0].sname +
+                '<br><br>性别：' + users.result[0].ssex +
+                '<br><br>年龄：' + users.result[0].sage +
+                '<br><br>手机：<input type="text" id="snumber" value="' + users.result[0].snumber + '"> ' +
+                '<br><br>邮箱：<input type="text" id="semail" value="' + users.result[0].semail + '"> ' +
+                '<br><br>地址：<input type="text" id="saddress" value="' + users.result[0].saddress + '"> ' + '<br><br>' +
+                '&nbsp;&nbsp;&nbsp;<button class="btn" onclick=updateStudent()>修改</button>'
+    }
+
+    function updateStudent() {
+        var sid = uid;
+        var sname = users.result[0].sname;
+        var sage = users.result[0].sage;
+        var ssex = users.result[0].ssex;
+        var semail = document.getElementById("semail").value;
+        var snumber = document.getElementById("snumber").value;
+        var saddress = document.getElementById("saddress").value;
+
+        $.ajax({
+            url: 'http://localhost:3000/student/updateStudent',
+            type: 'post',
+            datatype: 'jsonp',
+            crossDomain: true,
+            data: {
+                sid: sid,
+                sname: sname,
+                sage: sage,
+                ssex: ssex,
+                semail: semail,
+                saddress: saddress,
+                snumber: snumber
+            },
+            success: function (data, status, xhr) {
+                console.log(data);
+                if (status === "success" && data.result === 1) {
+                    history.go(0)
+                } else {
+                    document.getElementById("warning").innerHTML = "您输入的信息有误"
+                }
+            }
+        });
+
+    }
+
+    function uploadImage() {
+        var formData = new FormData($("#frmUploadFile")[0]);
+
+        formData.append("sid", uid);
+
+        console.log(formData);
+
+        $.ajax({
+            url: 'http://localhost:3000/student/updateAvatar',
+            type: 'POST',
+            datatype: 'jsonp',
+            async: false,
+            cache: false,
+            contentType: false,
+            processData: false,
+            data: formData,
+            success: function (data) {
+                if (200 === data.code) {
+                    $("#imgShow").attr('src', data.filepath);
+                    $("#spanMessage").html("上传成功");
+                    sessionStorage.setItem("avatar", data.filepath)
+                } else {
+                    $("#spanMessage").html("上传失败");
+                }
+                console.log('imgUploader upload success, data:', data);
+            },
+            error: function (err) {
+                console.log("err", err);
+                $("#spanMessage").html("与服务器通信发生错误");
+            }
+        });
     }
 
 </script>
@@ -379,7 +458,7 @@
             <ul class="nav navbar-right top-nav">
                 <li class="editpro">
                     <i class="fasett fa-cog" aria-hidden="true" class="menu-button" id="menu-button"></i>
-                    <h5 class="pull-left login-person-head">Welcome WaLiA SaAB</h5>
+                    <h5 class="pull-left login-person-head" id="user"></h5>
                 </li>
             </ul>
         </div>
@@ -389,11 +468,12 @@
              style="background-color: #616060; border:1px solid #616060;">
             <ul class="nav navbar-nav side-nav">
                 <a href="#"><img class="logostyle"
-                                 src="https://vignette.wikia.nocookie.net/nationstates/images/2/29/WS_Logo.png/revision/latest?cb=20080507063620"
-                                 alt="LOGO"></a>
+                                 src=""
+                                 alt="LOGO" style="border-radius: 50%"></a>
                 <li>
-                    <a class="#" href="#" data-toggle="collapse" data-target="#submenu-1"><i class="fa fa-home"
-                                                                                             aria-hidden="true"></i>
+                    <a class="#" href="./student_home.html" data-toggle="collapse" data-target="#submenu-1"><i
+                            class="fa fa-home"
+                            aria-hidden="true"></i>
                           <span style="color:white;">  Home </span></a>
                 </li>
                 <li>
@@ -431,10 +511,20 @@
                     <div id="zhanghu_1" style="display:none">2222</div>
 
                     <h3 id="evaluation">老师评价</h3>
-                    <div id="evaluation_1" style="display:none">2222</div>
+                    <div id="evaluation_1" style="display:none">暂时还没有老师对你评价</div>
 
                     <h3 id="avatar">修改头像</h3>
-                    <div id="avatar_1" style="display:none">2222</div>
+                    <div id="avatar_1" style="display:none">
+                        <form class="form-horizontal" enctype='multipart/form-data' method='post' action='javascript:;'
+                              role="form"
+                              id="frmUploadFile">
+                            <label class="control-label col-sm-2">上传选择</label>
+                            <input type="file" name="files" class=""/>
+
+                            <button class="btn btn-primary" onClick="uploadImage()">上传</button>
+                            <span class="help-inline" id="spanMessage">选择文件，并上传</span>
+                        </form>
+                    </div>
 
                     <h3 id="updatepass">修改密码</h3>
                     <div id="updatepass_1" style="display:none">2222</div>
