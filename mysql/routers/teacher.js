@@ -54,7 +54,7 @@ Router.post('/updateAvatar', multipart(), function (req, res) {
     //return file url
 
 
-    updateAvatar('./upload/avatar' + filename, data.sid, function (result, err) {
+    updateAvatar('../upload/avatar/' + filename, req.body.tid, function (result, err) {
         res.json({code: 200, filepath: '../upload/avatar/' + filename, status: result.status});
     })
 });

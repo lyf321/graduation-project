@@ -14,6 +14,8 @@ const updateUser = require("../helpers/user/updateUser");
 const searchUser = require("../helpers/user/searchUser");
 const searchAdmin = require("../helpers/user/searchAdmin");
 const updatepass = require("../helpers/user/updatePass");
+const updateAdministrator = require("../helpers/user/updateAdministrator");
+
 
 //注册
 Router.use('/register', function (req, res) {
@@ -60,6 +62,13 @@ Router.use('/updateUser', function (req, res) {
 Router.use('/updatepass', function (req, res) {
 
     updatepass(req.body, function (result, err) {
+        res.send({status: result.status})
+    })
+});
+
+Router.use('/updateAdministrator', function (req, res) {
+
+    updateAdministrator(req.body, function (result, err) {
         res.send({status: result.status})
     })
 });

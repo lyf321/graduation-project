@@ -218,6 +218,7 @@
     let uid = sessionStorage.getItem("id");
     let user = sessionStorage.getItem("user");
     let avatar = sessionStorage.getItem("avatar");
+    console.log(avatar)
     window.onload = function () {
         document.getElementById("user").innerHTML = "Welcome " + user;
         $(".logostyle").attr("src", avatar);

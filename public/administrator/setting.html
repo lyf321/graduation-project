@@ -224,16 +224,17 @@
                             '<br><br>性别：' + data.result[0].sex +
                             '<br><br>出生日期：' + data.result[0].birth +
                             '<br><br>联系方式：' + data.result[0].tel +
+                            '<br><br>年龄：' + data.result[0].age +
                             '<br><br>手机：' + data.result[0].phone +
                             '<br><br>邮箱：' + data.result[0].email +
-                            '<br><br>地址：' + data.result[0].address + '<br><br>';
+                            '<br><br>地址：' + data.result[0].address + '<br><br>' +
+                            '&nbsp;&nbsp;&nbsp;<button class="btn" id="editStudent" onclick=editAdministrator()>修改</button>';
 
                     zhanghu.innerHTML = '<br>用户ID：' + data.result[0].uid +
                             '<br><br>用户名：' + data.result[0].username +
                             '<br><br>身份：管理员' + '<br><br>';
 
                     updatepass.innerHTML = '<br>密码：' + data.result[0].password + '&nbsp;&nbsp;&nbsp;<button class="btn" id="update" onclick=updatepassword()>修改</button>'
-
                 }
             }
         });
@@ -295,6 +296,51 @@
                     history.go(0)
                 } else {
                     document.getElementById("warning").innerHTML = "修改失败！"
+                }
+            }
+        });
+    }
+
+    function editAdministrator() {
+        document.getElementById("jiben_1").innerHTML = '<br>姓名：' + users.result[0].name +
+                '<br><br>性别：' + users.result[0].sex +
+                '<br><br>出生日期：' + users.result[0].birth +
+                '<br><br>联系方式：' + users.result[0].tel +
+                '<br><br>年龄：' + users.result[0].age +
+                '<br><br>手机：<input type="text" id="number" value="' + users.result[0].phone + '"> ' +
+                '<br><br>邮箱：<input type="text" id="email" value="' + users.result[0].email + '"> ' +
+                '<br><br>地址：<input type="text" id="address" value="' + users.result[0].address + '"> ' + '<br><br>' +
+                '&nbsp;&nbsp;&nbsp;<button class="btn" onclick=updateAdministrator()>修改</button>'
+    }
+
+    function updateAdministrator() {
+        var sid = uid;
+        var name = users.result[0].name;
+        var age = users.result[0].age;
+        var sex = users.result[0].sex;
+        var email = document.getElementById("email").value;
+        var number = document.getElementById("number").value;
+        var address = document.getElementById("address").value;
+
+        $.ajax({
+            url: 'http://localhost:3000/user/updateAdministrator',
+            type: 'post',
+            datatype: 'jsonp',
+            crossDomain: true,
+            data: {
+                sid: sid,
+                name: name,
+                age: age,
+                sex: sex,
+                email: email,
+                address: address,
+                number: number
+            },
+            success: function (data, status, xhr) {
+                if (status === "success" && data.status === 1) {
+                    history.go(0)
+                } else {
+                    document.getElementById("warning").innerHTML = "您输入的信息有误"
                 }
             }
         });

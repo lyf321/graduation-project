@@ -201,6 +201,8 @@
 </style>
 <script>
     let users;
+    var uid = sessionStorage.getItem("id");
+    var password;
     let user = sessionStorage.getItem("user");
     let avata = sessionStorage.getItem("avatar");
     window.onload = function () {
@@ -231,20 +233,18 @@
 //                            '<br><br>联系方式：' + data.result[0].tel +
                             '<br><br>手机：' + data.result[0].tnumber +
                             '<br><br>邮箱：' + data.result[0].temail +
-                            '<br><br>地址：' + data.result[0].taddress + '<br><br>';
+                            '<br><br>地址：' + data.result[0].taddress + '<br><br>' +
+                            '&nbsp;&nbsp;&nbsp;<button class="btn" id="editTeacher" onclick=editTeacher()>修改</button>'
 
                     zhanghu.innerHTML = '<br>用户ID：' + data.result[0].tid +
                             '<br><br>用户名：' + data.result[0].username +
                             '<br><br>身份：老师' + '<br><br>';
-                    avatar.innerHTML = '<input type="file" id="updateAvatar" value="">' +
-                            '<br><button class="btn" onclick=updateAvatar()>修改</button>';
 
                     updatepass.innerHTML = '<br>密码：' + data.result[0].password + '&nbsp;&nbsp;&nbsp;<button class="btn" id="update" onclick=updatepassword()>修改</button>'
 
                 }
             }
         });
-
 
         var jiben_1 = document.getElementById("jiben_1");
         var jiben = document.getElementById("jiben");
@@ -286,13 +286,11 @@
         }
     };
 
+
     function updatepassword() {
         document.getElementById("updatepass_1").innerHTML = '<input type="text" id="pass" value="">' +
                 '&nbsp;&nbsp;&nbsp;<button class="btn" onclick=editpassword()>修改</button>'
     }
-
-    var uid;
-    var password;
 
     function editpassword() {
         uid = users.result[0].uid;
@@ -339,6 +337,87 @@
                     $("#imgShow").attr('src', data.filepath);
                     $("#spanMessage").html("上传成功");
                     sessionStorage.setItem("avatar", data.filepath)
+                } else {
+                    $("#spanMessage").html("上传失败");
+                }
+                console.log('imgUploader upload success, data:', data);
+            },
+            error: function (err) {
+                console.log("err", err);
+                $("#spanMessage").html("与服务器通信发生错误");
+            }
+        });
+    }
+
+
+    function editTeacher() {
+        document.getElementById("jiben_1").innerHTML = '<br>姓名：' + users.result[0].tname +
+                '<br><br>性别：' + users.result[0].tsex +
+                '<br><br>年龄：' + users.result[0].tage +
+                '<br><br>手机：<input type="text" id="tnumber" value="' + users.result[0].tnumber + '"> ' +
+                '<br><br>邮箱：<input type="text" id="temail" value="' + users.result[0].temail + '"> ' +
+                '<br><br>地址：<input type="text" id="taddress" value="' + users.result[0].taddress + '"> ' + '<br><br>' +
+                '&nbsp;&nbsp;&nbsp;<button class="btn" onclick=updateTeacher()>修改</button>'
+    }
+
+    function updateTeacher() {
+        var tid = uid;
+        var tname = users.result[0].tname;
+        var tage = users.result[0].tage;
+        var tsex = users.result[0].tsex;
+        var temail = document.getElementById("temail").value;
+        var tnumber = document.getElementById("tnumber").value;
+        var taddress = document.getElementById("taddress").value;
+
+        console.log(uid)
+
+        $.ajax({
+            url: 'http://localhost:3000/teacher/updateTeacher',
+            type: 'post',
+            datatype: 'jsonp',
+            crossDomain: true,
+            data: {
+                tid: tid,
+                tname: tname,
+                tage: tage,
+                tsex: tsex,
+                temail: temail,
+                taddress: taddress,
+                tnumber: tnumber
+            },
+            success: function (data, status, xhr) {
+                console.log(data);
+                if (status === "success" && data.result === 1) {
+                    history.go(0)
+                } else {
+                    document.getElementById("warning").innerHTML = "您输入的信息有误"
+                }
+            }
+        });
+    }
+
+    function uploadImage() {
+        var formData = new FormData($("#frmUploadFile")[0]);
+
+        formData.append("tid", uid);
+
+        console.log(formData);
+
+        $.ajax({
+            url: 'http://localhost:3000/teacher/updateAvatar',
+            type: 'POST',
+            datatype: 'jsonp',
+            async: false,
+            cache: false,
+            contentType: false,
+            processData: false,
+            data: formData,
+            success: function (data) {
+                if (200 === data.code) {
+                    $("#imgShow").attr('src', data.filepath);
+                    $("#spanMessage").html("上传成功");
+                    sessionStorage.setItem("avatar", data.filepath)
+                    history.go(0)
                 } else {
                     $("#spanMessage").html("上传失败");
                 }
@@ -430,7 +509,7 @@
     <div class="container-fluid">
         <div class="row course_style">
             <div class="col-md-12 dashhead">
-                <h1 class="text-center"> Welcome To setting</h1>
+                <h1 class="text-center"> Welcome To  setting</h1>
                 <div id="list_info">
                     <h3 id="jiben">基本信息</h3>
                     <div id="jiben_1" style="display:none">1111</div>

@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css">
+    <!--<link rel="stylesheet" href="../CSS/fontawesome-all.min.css">-->
 
     <link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
@@ -199,6 +200,7 @@
         color: black;
         position: absolute;
         width: 200px;
+        /*background-color: gainsboro;*/
     }
 
     .bookList span {
@@ -211,8 +213,11 @@
         position: absolute;
         width: 200px;
     }
+    .student-border{
+
+    }
 </style>
-<script>
+<script >
     let studentsEva;
     let students;
     let total = 0;
@@ -239,10 +244,10 @@
                 let list_1 = "";
                 if (status === "success" && data.status === 1) {
                     for (let i = 0; i < data.result.length; i++) {
-                        list_1 += '<div> ' +
+                        list_1 += '<div class="student-border"> ' +
                                 '<span></span><div class="name">' + data.result[i].sname + '</div>' +
                                 '<a data-toggle="modal" data-target="#updateEvaluationStuModel" onclick=addEva_1()>' +
-                                '<img src="../upload/avatar/1.png" style="width: 200px;height: 150px;" id=' + data.result[i].sid + '> </a>' +
+                                '<img src="../upload/avatar/1.png" style="border: 1px solid gainsboro;width: 200px;height: 150px;" id=' + data.result[i].sid + '> </a>' +
                                 '</div>'
                     }
                     document.getElementById("course_list_eva").innerHTML = list_1;
@@ -274,7 +279,7 @@
                                 list += '<div> ' +
                                         '<span></span><div class="name">' + data.result[i].sname + '</div>' +
                                         '<a data-toggle="modal" data-target="#evaluationStuModel" onclick=addEva()>' +
-                                        '<img src="../upload/avatar/1.png" style="width: 200px;height: 150px;" id=' + data.result[i].sid + '> </a>' +
+                                        '<img src="../upload/avatar/1.png" style="border: 1px solid gainsboro;width: 200px;height: 150px;" id=' + data.result[i].sid + '> </a>' +
                                         '</div>'
                             }
                         }
@@ -287,7 +292,7 @@
                         list += '<div> ' +
                                 '<span></span><div class="name">' + data.result[i].sname + '</div>' +
                                 '<a data-toggle="modal" data-target="#evaluationStuModel" onclick=addEva()>' +
-                                '<img src="../upload/avatar/1.png" style="width: 200px;height: 150px;" id=' + data.result[i].sid + '> </a>' +
+                                '<img src="../upload/avatar/1.png" style="border: 1px solid gainsboro;width: 200px;height: 150px;" id=' + data.result[i].sid + '> </a>' +
                                 '</div>'
                     }
                     document.getElementById("course_list").innerHTML = list;
@@ -451,8 +456,8 @@
                                  src=""
                                  alt="LOGO" style="border-radius: 50%"></a>
                 <li>
-                    <a class="#" href="teacher_home.html" data-toggle="collapse" data-target="#submenu-1"><i class="fa fa-home"
-                                                                                             aria-hidden="true"></i>
+                    <a class="#" href="teacher_home.html" data-toggle="collapse" data-target="#submenu-1">
+                        <i class="fa fa-cog" aria-hidden="true"></i>
                           <span style="color:white;">  Home </span></a>
                 </li>
                 <li>
@@ -481,9 +486,10 @@
     <div class="container-fluid">
         <div class="row course_style">
             <div class="col-md-12 dashhead">
-                <h1 class="text-center"> Welcome To setting</h1>
+                <h1 class="text-center" style="color:grey"> Welcome To setting</h1>
                 <br>
                 <h4>共 <span id="total"></span> 名学生选课</h4>
+                <hr>
                 <h3>未评价学生</h3>
                 <div id="course_list" class="bookList">
 
