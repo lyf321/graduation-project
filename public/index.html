@@ -19,32 +19,32 @@
         #videos {
             position: absolute;
             left: 30%;
-            top: 0;
+            top: 100px;
             bottom: 0;
             right: 0;
-            overflow: auto;
+            /*overflow: auto;*/
         }
 
         #videos #me {
             display: inline-block;
-            width: 50%;
-            margin-left: 350px;
-            margin-top: 80px;
+            width: 70%;
+            margin-left: 150px
         }
 
         #videos .other {
             display: inline-block;
-            width: 10%;
+            width: 20%;
             margin-left: -11%;
         }
 
         #chat {
             position: absolute;
             left: 20px;
-            top: 20px;
+            top: 100px;
             bottom: 20px;
             width: 30%;
-            border: 1px solid #0f0f0f;
+            border-radius: 7px;
+            border: 1px solid darkgray;
         }
 
         #chat .msgIpt, #chat .fileIpt {
@@ -64,7 +64,7 @@
         }
 
         #chat .fileIpt, #chat .sendFileBtn {
-            bottom: 30px;
+            bottom: 35px;
         }
 
         #chat .msgs {
@@ -89,14 +89,26 @@
             font-weight: bold;
             text-decoration: none
         }
+        nav{
+
+        }
+        nav h1{
+            margin:0;
+            height:80px;
+            padding-top: 20px;
+            padding-left: 30px;
+            background-color: #616060;
+        }
     </style>
 </head>
 <body>
+<nav>
+    <h1>欢迎来到, zaid在线教育</h1>
+</nav>
 <div id="chat">
     <div class="msgs" id="msgs"></div>
-    <input type="file" id="fileIpt" class="fileIpt form-control">
+    <input type="file" id="fileIpt" class="fileIpt form-control">&nbsp;&nbsp;&nbsp;
     <button id="sendFileBtn" class="sendFileBtn btn btn-primary">发送文件</button>
-    <br>
     <input type="text" id="msgIpt" class="msgIpt form-control">
     <button id="sendBtn" class="sendBtn btn btn-primary">发送</button>
 </div>
