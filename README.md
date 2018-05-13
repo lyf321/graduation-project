@@ -30,10 +30,36 @@
 数据库（7个）
 
 students
+```
+sid char(4)
+sname varchar(20)
+sage int
+ssex char(1)
+semail varchar(40)
+saddress varchar(50)
+snumber varchar(15)
+savatar varchar(50)
+```
 
 stu_cour
+```
+create table stu_cour(
+	sid char(4),
+    cid char(4),
+    UNIQUE (sid, cid)
+);
+```
 
 evaluations
+```
+create table evaluations(
+	sid char(4),
+    cid char(4),
+    tid char(4),
+    evaluation varchar(200),
+    suggestion varchar(200)
+);
+```
 
 teachers
 
@@ -42,5 +68,34 @@ courses
 user
 
 administrator
+```
+uid char(4)
+name varchar(10)
+address varchar(20)
+email varchar(20)
+phone varchar(15)
+tel varchar(15)
+sex varchar(4)
+age varchar(3)
+birth varchar(20)
 
+```
 
+attendance
+```
+create table attendance(
+	tid char(4),
+    month char(2),
+    year char(4),	
+    day char(2),
+    UNIQUE (tid,month,year,day)
+);
+```
+evaluationCourse
+```
+create table evaluationCourse(
+	cid char(4),
+    tid char(4),
+    evaluations varchar(400)
+);
+```

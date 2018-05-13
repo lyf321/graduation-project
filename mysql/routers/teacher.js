@@ -18,6 +18,8 @@ const updateEvaluation = require("../helpers/teacher/updateEvalulation");
 const getAvatar = require("../helpers/teacher/getAvatar");
 const getCourseByID = require("../helpers/teacher/getCourseByID");
 const updateAvatar = require("../helpers/teacher/updateAvatar");
+const attendance = require("../helpers/teacher/attendance");
+const getAttendance = require("../helpers/teacher/getAttendance");
 
 
 Router.use('/getAll', function (req, res) {
@@ -126,6 +128,20 @@ Router.use('/searchOrderStudentEvaluation', function (req, res) {
 Router.use('/searchCourse', function (req, res) {
 
     searchCourse(req.body, function (result, err) {
+        res.send({result: result.results, status: result.status})
+    })
+});
+
+Router.use('/attendance', function (req, res) {
+
+    attendance(req.body, function (result, err) {
+        res.send({result: result.results, status: result.status})
+    })
+});
+
+Router.use('/getAttendance', function (req, res) {
+
+    getAttendance(req.body, function (result, err) {
         res.send({result: result.results, status: result.status})
     })
 });

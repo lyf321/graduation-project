@@ -16,6 +16,8 @@ const orderCourse = require("../helpers/student/orderCourse");
 const getAvater = require("../helpers/student/getAvater");
 const getEvalulation = require("../helpers/student/getEvaluation");
 const updateAvatar = require("../helpers/student/updateAvatar");
+const finishCourse = require("../helpers/student/finishCourse");
+const getFinishCourse = require("../helpers/student/getFinishCourse");
 
 Router.use('/getAll', function (req, res) {
 
@@ -102,6 +104,20 @@ Router.use('/searchStudentBySid', function (req, res) {
 Router.use('/getCourse', function (req, res) {
 
     getCourse(req.body, function (result, err) {
+        res.send({result: result.results})
+    })
+});
+
+Router.use('/finishCourse', function (req, res) {
+
+    finishCourse(req.body, function (result, err) {
+        res.send({result: result.results})
+    })
+});
+
+Router.use('/getFinishCourse', function (req, res) {
+
+    getFinishCourse(req.body, function (result, err) {
         res.send({result: result.results})
     })
 });

@@ -218,7 +218,6 @@
     let uid = sessionStorage.getItem("id");
     let user = sessionStorage.getItem("user");
     let avatar = sessionStorage.getItem("avatar");
-    console.log(avatar)
     window.onload = function () {
         document.getElementById("user").innerHTML = "Welcome " + user;
         $(".logostyle").attr("src", avatar);
@@ -243,6 +242,9 @@
                                 '</div>'
                     }
                     document.getElementById("course_list").innerHTML = list;
+                }else{
+                    document.getElementById("course_list").innerHTML = "还没有学生选择你的课程!";
+                    document.getElementById("course_list").style.marginLeft = "400px"
                 }
             }
         });

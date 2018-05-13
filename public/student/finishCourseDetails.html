@@ -194,13 +194,21 @@
         margin-right: auto;
     }
 
+    #evaluations {
+        /*display: inline-block;*/
+        /*width:300px;*/
+    }
+
 </style>
 <script>
-    var course;
+    var course = [];
     let id = window.location.search.split("=")[1];
-    let uid = sessionStorage.getItem("id");
+    let userId = sessionStorage.getItem("id");
+    let user = sessionStorage.getItem("user");
     let avatar = sessionStorage.getItem("avatar");
+    var tid;
     window.onload = function () {
+        document.getElementById("user").innerHTML = "Welcome " + user;
         $(".logostyle").attr("src", avatar);
         $.ajax({
             url: 'http://localhost:3000/course/searchCourse',
@@ -211,83 +219,73 @@
             },
             success: function (data, status, xhr) {
                 course = data;
+                tid = data.result[0].tid;
                 var list = "";
                 if (status === "success" && data.status === 1) {
                     list += '<div>' + data.result[0].cname +
                             '</div><br><br><div>' + data.result[0].tname +
                             '</div><br><br><div>' + data.result[0].cproperty + '&nbsp;&nbsp;( 1:公开课  0:一对一 )' +
                             '</div><br><br><div>' + data.result[0].ctype +
+                            '</div><br><br><div>' + data.result[0].ctype +
                             '</div><br><br><div>' + data.result[0].cintroduce
-                    var timeRangee;
-                    var range = ""
-
-                    if (data.result[0].ctimeRange !== null) {
-                        timeRangee = data.result[0].ctimeRange.split("|");
-                        for (var k = 0; k < timeRangee.length; k++) {
-                            console.log(timeRangee[k])
-                            if (timeRangee[k] !== "") {
-                                var newData = dateAdd(data.result[0].ctime, k + 1);
-                                range += '</div><br><br><span>' + newData +
-                                        '</span>&nbsp;&nbsp;<span>' + timeRangee[k] + '</span>&nbsp;' +
-                                        '<input type="checkbox" class="cbox" value = ' + newData + ',' + timeRangee[k] + '"/>';
-                            }
-                        }
-                    } else {
-                        range += '</div><br><br><div>'+data.result[0].ctime+'</div>';
-                    }
-
-
-                    list += range;
 
                     document.getElementById("course").innerHTML = list;
                 }
             }
         });
-    };
-
-    function checkTime(a, b) {
-        console.log(a, b)
-    }
-
-    function dateAdd(startDate, i) {
-        startDate = new Date(startDate);
-        startDate = +startDate + 1000 * 60 * 60 * 24 * i;
-        startDate = new Date(startDate);
-        var nextStartDate = startDate.getFullYear() + "-" + (startDate.getMonth() + 1) + "-" + startDate.getDate();
-        return nextStartDate;
-    }
-
-    function orderCourse() {
-        alert("预约课程");
-        orderTime = ""
-
-        var obj = document.getElementsByClassName('cbox');
-        for (var i = 0; i < obj.length; i++) {
-            if (obj[i].checked) {
-                orderTime += obj[i].value +" "
-            }
-        }
-
-        console.log(orderTime)
 
         $.ajax({
-            url: 'http://localhost:3000/student/orderCourse',
+            url: 'http://localhost:3000/course/getCourseEvaluations',
             type: 'post',
             crossDomain: true,
             data: {
-                sid: uid,
                 cid: id,
-                orderTime:orderTime
+                tid: 't001',
             },
             success: function (data, status, xhr) {
-                course = data;
-//                console.log(data)
+                if (status === "success" && data.status === 1) {
+                    var length = data.result.length
+                    document.getElementById("evaluations").innerHTML = data.result[length-1].evaluations;
+                }
+            }
+        });
+    };
+
+    function evaluationCourse() {
+        var evaluations = document.getElementById("evaluations").value;
+
+        $.ajax({
+            url: 'http://localhost:3000/course/evaluationCourse',
+            type: 'post',
+            crossDomain: true,
+            data: {
+                cid: id,
+                tid: course.result[0].tid,
+                evaluations: evaluations
+            },
+            success: function (data, status, xhr) {
                 if (status === "success" && data.result === 1) {
-                    window.location.href = "myCourse.html"
+                    $.ajax({
+                        url: 'http://localhost:3000/course/getCourseEvaluations',
+                        type: 'post',
+                        crossDomain: true,
+                        data: {
+                            cid: id,
+                            tid: course.result[0].tid,
+                            evaluations: evaluations
+                        },
+                        success: function (data, status, xhr) {
+                            if (status === "success" && data.result === 1) {
+                                document.getElementById("evaluations").innerHTML = data.result[0].evaluations;
+                            }
+                        }
+                    });
                 }
             }
         });
     }
+
+
 </script>
 <body>
 <div id="throbber" style="display:none; min-height:120px;"></div>
@@ -323,7 +321,7 @@
             <ul class="nav navbar-right top-nav">
                 <li class="editpro">
                     <i class="fasett fa-cog" aria-hidden="true" class="menu-button" id="menu-button"></i>
-                    <h5 class="pull-left login-person-head">Welcome WaLiA SaAB</h5>
+                    <h5 class="pull-left login-person-head" id="user"></h5>
                 </li>
             </ul>
         </div>
@@ -336,8 +334,9 @@
                                  src=""
                                  alt="LOGO" style="border-radius: 50%"></a>
                 <li>
-                    <a class="#" href="#" data-toggle="collapse" data-target="#submenu-1"><i class="fa fa-home"
-                                                                                             aria-hidden="true"></i>
+                    <a class="#" href="./student_home.html" data-toggle="collapse" data-target="#submenu-1"><i
+                            class="fa fa-home"
+                            aria-hidden="true"></i>
                           <span style="color:white;">  Home </span></a>
                 </li>
                 <li>
@@ -347,13 +346,13 @@
                         <span style="color:white;">  我的课程 </span></a>
                 </li>
                 <li>
-                    <a class="active" href="./orderCourse.html" data-toggle="collapse" data-target="#submenu-1"><i
+                    <a class="#" href="./orderCourse.html" data-toggle="collapse" data-target="#submenu-1"><i
                             class="fa fa-calendar"
                             aria-hidden="true"></i>  
                         <span style="color:white;"> 预约课程 </span></a>
                 </li>
                 <li>
-                    <a class="#" href="./finishCourse.html" data-toggle="collapse" data-target="#submenu-1"><i
+                    <a class="active" href="./finishCourse.html" data-toggle="collapse" data-target="#submenu-1"><i
                             class="fa fa-calendar"
                             aria-hidden="true"></i>  
                         <span style="color:white;"> 已结束课程 </span></a>
@@ -372,7 +371,7 @@
     <div class="container-fluid">
         <div class="row course_style">
             <div class="col-md-12 dashhead ">
-                <h1 class="text-center"> Welcome To orderCourseDetails </h1>
+                <h1 class="text-center"> Welcome To courseDetails </h1>
                 <div class="row" id="course_info">
                     <div class="col-md-4">
                         <div>课程名称</div>
@@ -381,21 +380,23 @@
                         <br><br>
                         <div>课程性质</div>
                         <br><br>
+                        <div>教师介绍</div>
+                        <br><br>
                         <div>课程类型</div>
                         <br><br>
                         <div>课程简介</div>
                         <br><br>
-                        <div>上课时间</div>
-                        <br><br>
+
                     </div>
                     <div class="col-md-4" id="course">
 
                     </div>
                     <br>
                     <br>
-
-                    <a class="btn btn-primary" onclick=orderCourse()>预约</a><br><br>
-                    <a class="btn btn-primary" href="orderCourse.html">返回</a>
+                    <div>我的评价：</div>
+                    <textarea type="" id="evaluations"></textarea><br><br>
+                    <a class="btn btn-primary" onclick=evaluationCourse()>课程评价</a><br><br>
+                    <a class="btn btn-primary" href="myCourse.html">返回</a>
                 </div>
             </div>
         </div>

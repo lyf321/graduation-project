@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css">
 
+    <script src="../laydate/laydate.js"></script>
+
     <link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
     <script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -231,7 +233,7 @@
                                 '<div class="col-sm-3">' +
                                 '<img src="http://dummyimage.com/60x60/666/ffffff&text=' + data.result[i].cid + '" class="img-rounded" alt="' + data.result[i].cid + '">' +
                                 '<br/><br/>' +
-                                '<div>' + data.result[i].cname + '<br/>' + data.result[i].ctime + '</div>' +
+                                '<div>' + data.result[i].cname + '&nbsp;('+data.result[i].ctimrLong+'小时) <br/>' + data.result[i].ctime + '</div>' +
                                 '</div>' +
                                 '<div class="col-sm-9">' +
                                 '<div class="review-block-rate">' +
@@ -284,6 +286,20 @@
         var cintro_add = document.getElementById("cintro_add").value;
         var ctype_add = document.getElementById("ctype_add").value;
         var cproperty_add = document.getElementById("cproperty_add").value;
+        var ctime_add = document.getElementById("ctime_add").value;
+
+        var ctime_range = [];
+
+        var time1 = document.getElementById('ctime_add_time1').value
+        var time2 = document.getElementById('ctime_add_time2').value
+        var time3 = document.getElementById('ctime_add_time3').value
+        var time4 = document.getElementById('ctime_add_time4').value
+        var time5 = document.getElementById('ctime_add_time5').value
+        var time6 = document.getElementById('ctime_add_time6').value
+
+        ctime_range.push(time1, time2, time3, time4, time5, time6);
+
+        var range = ctime_range.join("|");
 
         $.ajax({
             url: 'http://localhost:3000/course/addCourse',
@@ -295,7 +311,9 @@
                 tid: uid,
                 ctype: ctype_add,
                 cproperty: cproperty_add,
-                cintroduce: cintro_add
+                cintroduce: cintro_add,
+                ctime_add:ctime_add,
+                ctimeRange: range
             },
             success: function (data, status, xhr) {
                 console.log(data);
@@ -309,6 +327,32 @@
         });
     }
 
+    function attendance(){
+        var date = new Date();
+        var year = date.getFullYear();
+        var month = date.getMonth()+1;
+        var day = date.getDate();
+
+        $.ajax({
+            url: 'http://localhost:3000/teacher/attendance',
+            type: 'post',
+            datatype: 'jsonp',
+            data: {
+                tid: uid,
+                month:month,
+                year:year,
+                day:day
+            },
+            crossDomain: true,
+            success: function (data, status, xhr) {
+                alert("签到成功！")
+            }
+        });
+    }
+
+    laydate.render({
+        elem: '#ctime_add' //指定元素
+    });
 </script>
 <body>
 <div id="throbber" style="display:none; min-height:120px;"></div>
@@ -393,6 +437,7 @@
                 <button class="btn btn-primary" data-toggle="modal" data-target="#addCourseModel"
                         onclick=addTeacherSelect()>申请课程
                 </button>
+                <button class="btn btn-primary" onclick=attendance()>签到</button>
                 <div class="container">
                     <div class="row">
                         <div class="col-sm-12">
@@ -464,6 +509,36 @@
                             <option value="1">公开课</option>
                         </select>
                         </span>
+                    </div>
+                    <div class="form-group">
+
+                        <label class="control-label">开课时间（最近6天的课程）</label><br>
+
+                        <input id="ctime_add" type="datetime" class="startTime" name="ctime"
+                               placeholder="课程开始时间"
+                               class="form-control"/>
+
+                        <input id="ctime_add_time1" type="datetime" class="startTime" name="ctime"
+                               placeholder="第一天"
+                               class="form-control"/>
+                        <input id="ctime_add_time2" type="datetime" class="startTime" name="ctime"
+                               placeholder="第二天"
+                               class="form-control"/>
+
+                        <input id="ctime_add_time3" type="datetime" class="startTime" name="ctime"
+                               placeholder="第三天"
+                               class="form-control"/>
+                        <input id="ctime_add_time4" type="datetime" class="startTime" name="ctime"
+                               placeholder="第四天"
+                               class="form-control"/>
+
+                        <input id="ctime_add_time5" type="datetime" class="startTime" name="ctime"
+                               placeholder="第五天"
+                               class="form-control"/>
+                        <input id="ctime_add_time6" type="datetime" class="startTime" name="ctime"
+                               placeholder="第六天"
+                               class="form-control"/>
+
                     </div>
                     <div class="form-group">
 

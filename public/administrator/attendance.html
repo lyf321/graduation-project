@@ -2,246 +2,388 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <link href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i"
-          rel="stylesheet">
-
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css">
-    <link href="../CSS/fullcalendar.css" rel="stylesheet">
-
-    <script src="../JS/fullcalendar.js"></script>
-    <link rel="stylesheet" href="../CSS/attendance.css">
-    <script src="../JS/attendance.js" type="text/javascript"></script>
-
     <title>考勤</title>
-    <script>
-
-        $(document).ready(function () {
-            var date = new Date();
-            var d = date.getDate();
-            var m = date.getMonth();
-            var y = date.getFullYear();
-
-            /*  className colors
-
-             className: default(transparent), important(red), chill(pink), success(green), info(blue)
-
-             */
-
-
-            /* initialize the external events
-             -----------------------------------------------------------------*/
-
-            $('#external-events div.external-event').each(function () {
-
-                // create an Event Object (http://arshaw.com/fullcalendar/docs/event_data/Event_Object/)
-                // it doesn't need to have a start or end
-                var eventObject = {
-                    title: $.trim($(this).text()) // use the element's text as the event title
-                };
-
-                // store the Event Object in the DOM element so we can get to it later
-                $(this).data('eventObject', eventObject);
-
-                // make the event draggable using jQuery UI
-                $(this).draggable({
-                    zIndex: 999,
-                    revert: true,      // will cause the event to go back to its
-                    revertDuration: 0  //  original position after the drag
-                });
-
-            });
-
-
-            /* initialize the calendar
-             -----------------------------------------------------------------*/
-
-            var calendar = $('#calendar').fullCalendar({
-                header: {
-                    left: 'title',
-                    center: 'agendaDay,agendaWeek,month',
-                    right: 'prev,next today'
-                },
-                editable: true,
-                firstDay: 1, //  1(Monday) this can be changed to 0(Sunday) for the USA system
-                selectable: true,
-                defaultView: 'month',
-
-                axisFormat: 'h:mm',
-                columnFormat: {
-                    month: 'ddd',    // Mon
-                    week: 'ddd d', // Mon 7
-                    day: 'dddd M/d',  // Monday 9/7
-                    agendaDay: 'dddd d'
-                },
-                titleFormat: {
-                    month: 'MMMM yyyy', // September 2009
-                    week: "MMMM yyyy", // September 2009
-                    day: 'MMMM yyyy'                  // Tuesday, Sep 8, 2009
-                },
-                allDaySlot: false,
-                selectHelper: true,
-                select: function (start, end, allDay) {
-                    var title = prompt('Event Title:');
-                    if (title) {
-                        calendar.fullCalendar('renderEvent',
-                                {
-                                    title: title,
-                                    start: start,
-                                    end: end,
-                                    allDay: allDay
-                                },
-                                true // make the event "stick"
-                        );
-                    }
-                    calendar.fullCalendar('unselect');
-                },
-                droppable: true, // this allows things to be dropped onto the calendar !!!
-                drop: function (date, allDay) { // this function is called when something is dropped
-
-                    // retrieve the dropped element's stored Event Object
-                    var originalEventObject = $(this).data('eventObject');
-
-                    // we need to copy it, so that multiple events don't have a reference to the same object
-                    var copiedEventObject = $.extend({}, originalEventObject);
-
-                    // assign it the date that was reported
-                    copiedEventObject.start = date;
-                    copiedEventObject.allDay = allDay;
-
-                    // render the event on the calendar
-                    // the last `true` argument determines if the event "sticks" (http://arshaw.com/fullcalendar/docs/event_rendering/renderEvent/)
-                    $('#calendar').fullCalendar('renderEvent', copiedEventObject, true);
-
-                    // is the "remove after drop" checkbox checked?
-                    if ($('#drop-remove').is(':checked')) {
-                        // if so, remove the element from the "Draggable Events" list
-                        $(this).remove();
-                    }
-
-                },
-
-                events: [
-//                    {
-//                        title: 'All Day Event',
-//                        start: new Date(y, m, 1)
-//                    },
-//                    {
-//                        id: 999,
-//                        title: 'Repeating Event',
-//                        start: new Date(y, m, d - 3, 16, 0),
-//                        allDay: false,
-//                        className: 'info'
-//                    },
-//                    {
-//                        id: 999,
-//                        title: 'Repeating Event',
-//                        start: new Date(y, m, d + 4, 16, 0),
-//                        allDay: false,
-//                        className: 'info'
-//                    },
-//                    {
-//                        title: 'Meeting',
-//                        start: new Date(y, m, d, 10, 30),
-//                        allDay: false,
-//                        className: 'important'
-//                    },
-//                    {
-//                        title: 'Lunch',
-//                        start: new Date(y, m, d, 12, 0),
-//                        end: new Date(y, m, d, 14, 0),
-//                        allDay: false,
-//                        className: 'important'
-//                    },
-//                    {
-//                        title: 'Birthday Party',
-//                        start: new Date(y, m, d + 1, 19, 0),
-//                        end: new Date(y, m, d + 1, 22, 30),
-//                        allDay: false,
-//                    },
-//                    {
-//                        title: 'Click for Google',
-//                        start: new Date(y, m, 28),
-//                        end: new Date(y, m, 29),
-//                        url: 'http://google.com/',
-//                        className: 'success'
-//                    }
-                ],
-            });
-
-
-        });
-
-    </script>
+    <link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <style>
 
         body {
             margin-bottom: 40px;
             margin-top: 40px;
             text-align: center;
-            font-size: 14px;
+            font-size: 18px;
             font-family: 'Roboto', sans-serif;
             background: url(http://www.digiphotohub.com/wp-content/uploads/2015/09/bigstock-Abstract-Blurred-Background-Of-92820527.jpg);
         }
 
-        #wrap {
-            width: 1100px;
+        #dateInput {
+            background: #33CCCC;
+            color: white;
+            font-weight: bold;
+            max-width: 700px;
             margin: 0 auto;
+            padding: 1em;
         }
 
-        #external-events {
-            float: left;
-            width: 150px;
-            padding: 0 10px;
-            text-align: left;
-        }
-
-        #external-events h4 {
-            font-size: 16px;
-            margin-top: 0;
-            padding-top: 1em;
-        }
-
-        .external-event { /* try to mimick the look of a real event */
-            margin: 10px 0;
-            padding: 2px 4px;
-            background: #3366CC;
-            color: #fff;
-            font-size: .85em;
-            cursor: pointer;
-        }
-
-        #external-events p {
-            margin: 1.5em 0;
-            font-size: 11px;
-            color: #666;
-        }
-
-        #external-events p input {
-            margin: 0;
-            vertical-align: middle;
+        #check {
+            display: inline-block;
+            width: 300px;
         }
 
         #calendar {
-            /* 		float: right; */
+            max-width: 700px;
             margin: 0 auto;
-            width: 900px;
-            background-color: #FFFFFF;
-            border-radius: 6px;
-            box-shadow: 0 1px 2px #C3C3C3;
-            -webkit-box-shadow: 0px 0px 21px 2px rgba(0, 0, 0, 0.18);
-            -moz-box-shadow: 0px 0px 21px 2px rgba(0, 0, 0, 0.18);
-            box-shadow: 0px 0px 21px 2px rgba(0, 0, 0, 0.18);
+            background: #5CCCCC;
+            padding: 0 0 1em 0;
+        }
+
+        #back {
+            float: left;
+        }
+
+        #forward {
+            float: right;
+        }
+
+        #cur {
+            color: white;
+            font-size: 120%;
+            position: relative;
+            /*left: 20%;*/
+        }
+
+        table {
+            max-width: 700px;
+            margin: 0 auto;
+            color: white;
+            padding: 2em;
+
+        }
+
+        th, td {
+            width: 50px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        td {
+            border: 1px solid white;
+        }
+
+        th {
+            background-color: #009999;
+            width: 80px;
+        }
+
+        .now {
+            background-color: #006363;
         }
 
     </style>
+    <script>
+        //        window.onload = function () {
+        //            month = date.getMonth() + 1;
+        //            $.ajax({
+        //                url: 'http://localhost:3000/teacher/getAttendance',
+        //                type: 'post',
+        //                datatype: 'jsonp',
+        //                data: {
+        //                    tid: tid,
+        //                    month: month
+        //                },
+        //                crossDomain: true,
+        //                success: function (data, status, xhr) {
+        //                    if (data.status === 1) {
+        //                        allDay = data.result;
+        //                        console.log(allDay.length)
+        //                    }
+        //                }
+        //            });
+        //        };
+    </script>
 </head>
 <body>
-<div id='wrap'>
-
-    <div id='calendar'></div>
-
-    <div style='clear:both'></div>
+<div id="content">
+    <div id="dateInput">
+        <label>日期:</label>
+        <input type="text" id="check" class="form-control" width="20px;" placeholder="xx-xx-xx">
+        <input type="button" id="changeDate" class="btn btn-primary" value="查询">
+    </div>
+    <div id="calendar">
+        <div id="calendarHeader">
+            <div>
+                <img id="back" src="">
+                <span id="cur"></span>
+                <img id="forward" src="">
+            </div>
+        </div>
+        <div id="calendarTable">
+            <table>
+                <tbody>
+                <tr>
+                    <th>一</th>
+                    <th>二</th>
+                    <th>三</th>
+                    <th>四</th>
+                    <th>五</th>
+                    <th>六</th>
+                    <th>日</th>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
+<!--<script type="text/javascript" src="Date.js"></script>-->
+<script>
+
+    var date = new Date();
+    var month;
+
+    var href = window.location.search;
+    var tid = href.split('=')[1];
+
+    var allDay = [];
+
+    function getAllDay() {
+        month = date.getMonth() + 1;
+        $.ajax({
+            url: 'http://localhost:3000/teacher/getAttendance',
+            type: 'post',
+            datatype: 'jsonp',
+            async: false,
+            data: {
+                tid: tid,
+                month: month
+            },
+            crossDomain: true,
+            success: function (data, status, xhr) {
+                if (data.status === 1) {
+                    allDay = data.result;
+                }
+            }
+        });
+    }
+
+    var y, m;
+
+    function addEvent(func) {
+        var old = window.onload;
+        if (typeof old === "function") {
+//            getAllDay();
+            old();
+            func();
+        } else {
+//            getAllDay();
+            window.onload = func;
+        }
+    }
+
+
+    //设置日历的标题
+    function setCalendarTitle(obj) {
+        var year = obj.getFullYear();
+        var month = obj.getMonth() + 1;
+        var title = "" + year + "年" + month + "月";
+        y = year;
+        m = month;
+        var set = document.getElementById('cur');
+        if (set.childNodes.length > 0)
+            set.removeChild(set.childNodes[0]);
+        var txt = document.createTextNode(title);
+        set.appendChild(txt);
+        var now = new Date(year, month - 1, 1);
+        calculateDay(now);
+    }
+
+    //计算当前月份有几天，第一天是星期几
+    function is_leap(year) {
+        return (year % 100 == 0 ? res = (year % 400 == 0 ? 1 : 0) : res = (year % 4 == 0 ? 1 : 0));
+    }
+
+    function day(year) {
+        mDays = new Array(31, 28 + is_leap(year), 31, 30, 31, 31, 30, 31, 30, 31, 30, 31);
+        return mDays;
+    }
+
+    function calculateDay(obj) {
+        var dayArr = day(obj.getFullYear());
+        var dayNum = dayArr[obj.getMonth()];
+        var dayFirst = obj.getDay(); //0是星期天， 6是星期六
+        var firstRow;
+        if (dayFirst != 0) {
+            firstRow = 8 - dayFirst;//第一行有日期的单元格个数,从右边数
+        } else {
+            firstRow = 1;
+        }
+        var firstRowBlank = 7 - firstRow; //第一行空的个数
+        var lastRow = (dayNum - firstRow) % 7; //最后一个有日期的单元格个数
+        var lastRowBlank = 7 - lastRow;
+        var RowNum = (dayNum - firstRow - lastRow) / 7 + 2;
+        renderCalendar(RowNum, firstRow, firstRowBlank, lastRow, lastRowBlank);
+    }
+
+    function renderCalendar(RowNum, firstRow, firstRowBlank, lastRow, lastRowBlank) {
+        var tbody = document.getElementsByTagName('tbody')[0];
+        var tr = tbody.getElementsByTagName("tr");
+        var len = tr.length;
+        if (len > 1) {
+            for (var index = 1; index < len; index++) {
+                tbody.removeChild(tr[1]);
+            }
+        }
+        var i = 1;
+        var j = 1;
+        for (; i <= RowNum; i++) {
+            if (i == 1) {
+                var row = document.createElement("tr");
+                while (firstRowBlank > 0) {
+                    var blank = document.createElement("td");
+                    row.appendChild(blank);
+                    firstRowBlank--;
+                }
+                while (firstRow > 0) {
+                    var date = document.createElement("td");
+                    var txt = document.createTextNode(j);
+
+                    if (allDay.length !== 0) {
+                        for (var k = 0; k < allDay.length; k++) {
+                            if (parseInt(allDay[k].day) === j) {
+                                var att = document.createElement("span");
+                                att.innerHTML = "签";
+                                att.style = "color:red";
+                                date.appendChild(txt);
+                                date.appendChild(att);
+                                row.appendChild(date);
+                            }else{
+                                date.appendChild(txt);
+                                row.appendChild(date);
+                            }
+                        }
+                    }
+                    date.appendChild(txt);
+                    row.appendChild(date);
+                    j++;
+                    firstRow--;
+                }
+                tbody.appendChild(row);
+            } else if (i == RowNum && lastRow > 0) {
+                var row = document.createElement("tr");
+                while (lastRow > 0) {
+                    var txt = document.createTextNode(j);
+                    var date = document.createElement("td");
+
+                    if (allDay.length !== 0) {
+                        for (var k = 0; k < allDay.length; k++) {
+                            if (parseInt(allDay[k].day) === j) {
+                                var att = document.createElement("span");
+                                att.innerHTML = "签";
+                                att.style = "color:red";
+                                date.appendChild(txt);
+                                date.appendChild(att);
+                                row.appendChild(date);
+                            }else{
+                                date.appendChild(txt);
+                                row.appendChild(date);
+                            }
+                        }
+                    }
+                    date.appendChild(txt);
+                    row.appendChild(date);
+                    j++;
+                    lastRow--;
+                }
+                while (lastRowBlank > 0) {
+                    var blank = document.createElement("td");
+                    row.appendChild(blank);
+                    lastRowBlank--;
+                }
+                tbody.appendChild(row);
+            } else {
+                var day = 7;
+                var row = document.createElement("tr");
+                while (day > 0) {
+                    var date = document.createElement("td");
+                    var txt = document.createTextNode(j);
+
+                    if (allDay.length !== 0) {
+                        for (var k = 0; k < allDay.length; k++) {
+                            if (parseInt(allDay[k].day) === j) {
+                                var att = document.createElement("span");
+                                att.innerHTML = "签";
+                                att.style = "color:red";
+                                date.appendChild(txt);
+                                date.appendChild(att);
+                                row.appendChild(date);
+                            }else{
+                                date.appendChild(txt);
+                                row.appendChild(date);
+                            }
+                        }
+                    }
+                    date.appendChild(txt);
+                    row.appendChild(date);
+                    j++;
+                    day--;
+                }
+                tbody.appendChild(row);
+            }
+        }
+    }
+
+    //读取系统当前时间，设置
+    function initiate() {
+        var now = new Date();
+        setCalendarTitle(now);
+    }
+
+    function checkCalendar() {
+        var button = document.getElementById('changeDate');
+        button.onclick = function () {
+            var date = document.getElementById("check").value;
+            var newDate = new Date(Date.parse(date));
+            setCalendarTitle(newDate);
+        }
+    }
+
+    function forwardMoth() {
+        var forward = document.getElementById("forward");
+        forward.onclick = function () {
+            var year = y;
+            var month = m;
+            if ((month + 1) <= 12) {
+                var newDate = new Date(year, month, 1);
+                setCalendarTitle(newDate);
+            } else {
+                var newDate = new Date(year + 1, 0, 1);
+                setCalendarTitle(newDate);
+            }
+        }
+    }
+
+    function backMonth() {
+        var back = document.getElementById("back");
+        back.onclick = function () {
+            var year = y;
+            var month = m;
+            if ((month - 1) >= 1) {
+                var newDate = new Date(year, month - 2, 1);
+                setCalendarTitle(newDate);
+                m = month - 1;
+            } else {
+                var newDate = new Date(year - 1, 11, 1);
+                setCalendarTitle(newDate);
+                m = 12;
+            }
+        }
+    }
+
+    addEvent(getAllDay());
+    addEvent(initiate());
+    addEvent(checkCalendar());
+    addEvent(forwardMoth());
+    addEvent(backMonth());
+</script>
 </body>
 </html>

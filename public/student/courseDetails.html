@@ -198,6 +198,7 @@
 <script>
     var course;
     let id = window.location.search.split("=")[1];
+    let userId = sessionStorage.getItem("id");
     let user = sessionStorage.getItem("user");
     let avatar = sessionStorage.getItem("avatar");
     window.onload = function () {
@@ -212,14 +213,15 @@
             },
             success: function (data, status, xhr) {
                 course = data;
+                console.log(data)
                 var list = "";
                 if (status === "success" && data.status === 1) {
                     list += '<div>' + data.result[0].cname +
                             '</div><br><br><div>' + data.result[0].tname +
                             '</div><br><br><div>' + data.result[0].cproperty + '&nbsp;&nbsp;( 1:公开课  0:一对一 )' +
                             '</div><br><br><div>' + data.result[0].ctype +
-                            '</div><br><br><div>' + data.result[0].ctype +
-                            '</div><br><br><div>' + data.result[0].cintroduce
+                            '</div><br><br><div>' + data.result[0].cintroduce +
+                            '</div><br><br><div>' + data.result[0].ctime
 
                     document.getElementById("course").innerHTML = list;
                 }
@@ -235,21 +237,41 @@
             crossDomain: true,
             data: {
                 cid: id,
-                sid: "001"
+                sid: userId
             },
             success: function (data, status, xhr) {
                 course = data;
                 if (status === "success" && data.result === 1) {
                     alert("删除成功");
                     history.go(-1)
+                } else {
+                    alert("删除失败");
+                    history.go(0)
                 }
             }
         });
     }
 
     function startCourse() {
+
+        $.ajax({
+            url: 'http://localhost:3000/student/finishCourse',
+            type: 'post',
+            datatype: 'jsonp',
+            data: {
+                cid: id,
+                sid: userId
+            },
+            crossDomain: true,
+            success: function (data, status, xhr) {
+                console.log(data);
+
+
+            }
+        });
         let link = "http://localhost:3000/#" + id
         document.getElementById("start").setAttribute("href", link);
+
     }
 
 </script>
@@ -318,6 +340,12 @@
                         <span style="color:white;"> 预约课程 </span></a>
                 </li>
                 <li>
+                    <a class="#" href="./finishCourse.html" data-toggle="collapse" data-target="#submenu-1"><i
+                            class="fa fa-calendar"
+                            aria-hidden="true"></i>  
+                        <span style="color:white;"> 已结束课程 </span></a>
+                </li>
+                <li>
                     <a class="#" href="./setting.html" data-toggle="collapse" data-target="#submenu-1"><i
                             class="fa fa-envelope"
                             aria-hidden="true"></i> 
@@ -340,11 +368,11 @@
                         <br><br>
                         <div>课程性质</div>
                         <br><br>
-                        <div>教师介绍</div>
-                        <br><br>
                         <div>课程类型</div>
                         <br><br>
                         <div>课程简介</div>
+                        <br><br>
+                        <div>上课时间</div>
                         <br><br>
 
                     </div>

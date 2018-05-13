@@ -2,19 +2,23 @@ const conn = require("../../mysql");
 
 module.exports = function (data, callback) {
     let sql1 = "SELECT courses.cid,courses.cname,courses.cintroduce,courses.ctype," +
-        "courses.cproperty,teachers.tid,teachers.tname FROM courses,teachers " +
+        "courses.cproperty,courses.ctime,courses.ctimrLong,courses.ctimeRange," +
+        "teachers.tid,teachers.tname FROM courses,teachers " +
         "where courses.cid = '" + data.search + "' and teachers.tid=courses.tid";
 
     let sql2 = "SELECT courses.cid,courses.cname,courses.cintroduce,courses.ctype," +
-        "courses.cproperty,teachers.tid,teachers.tname FROM courses,teachers " +
+        "courses.cproperty,courses.ctime,courses.ctimrLong,courses.ctimeRange," +
+        "teachers.tid,teachers.tname FROM courses,teachers " +
         "where courses.cname like '%" + data.search + "%' and teachers.tid=courses.tid";
 
     let sql3 = "SELECT courses.cid,courses.cname,courses.cintroduce,courses.ctype," +
-        "courses.cproperty,teachers.tid,teachers.tname FROM courses,teachers " +
+        "courses.cproperty,courses.ctime,courses.ctimrLong,courses.ctimeRange," +
+        "teachers.tid,teachers.tname FROM courses,teachers " +
         "where courses.tid = '" + data.search + "' and teachers.tid=courses.tid";
 
     let sql4 = "SELECT courses.cid,courses.cname,courses.cintroduce,courses.ctype," +
-        "courses.cproperty,teachers.tid,teachers.tname " +
+        "courses.cproperty,courses.ctime,courses.ctimrLong,courses.ctimeRange," +
+        "teachers.tid,teachers.tname " +
         "FROM courses,teachers where teachers.tid=courses.tid";
 
     if (data.search === "") {

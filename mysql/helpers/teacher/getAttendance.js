@@ -1,17 +1,15 @@
 /**
- * Created by liyangfan on 18-1-27.
+ * Created by liyangfan on 18-5-8.
  */
 const conn = require("../../mysql");
 
 module.exports = function (data, callback) {
 
-    let sql = "SELECT courses.cid,courses.cname,courses.clock,courses.cintroduce,courses.ctype," +
-        "courses.cproperty,teachers.tid,teachers.tname " +
-        "FROM courses,teachers where teachers.tid=courses.tid";
+    let sql = "SELECT * from attendance where tid = '" + data.tid + "'and month = '" + data.month + "'";
     conn.query(sql, function (err, results, fields) {
         if (err) {
             console.log("错误");
-            throw err;
+            // throw err;
         } else {
             if (results.length > 0) {
                 callback({results: results, status: 1});

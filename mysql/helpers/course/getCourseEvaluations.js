@@ -1,13 +1,11 @@
 /**
- * Created by liyangfan on 18-1-27.
+ * Created by liyangfan on 18-5-9.
  */
 const conn = require("../../mysql");
 
 module.exports = function (data, callback) {
 
-    let sql = "SELECT courses.cid,courses.cname,courses.clock,courses.cintroduce,courses.ctype," +
-        "courses.cproperty,teachers.tid,teachers.tname " +
-        "FROM courses,teachers where teachers.tid=courses.tid";
+    let sql = "SELECT * from evaluationCourse where cid = '" + data.cid + "' and tid = '" + data.tid + "'"
     conn.query(sql, function (err, results, fields) {
         if (err) {
             console.log("错误");

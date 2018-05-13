@@ -14,6 +14,8 @@ const deleteCourse = require("../helpers/course/deleteCourse");
 const addCourse = require("../helpers/course/addCourse");
 const searchCourse = require("../helpers/course/searchCourse");
 const searchStu = require("../helpers/course/searchStu");
+const evaluationCourse = require("../helpers/course/evaluationCourse");
+const getCourseEvaluations = require("../helpers/course/getCourseEvaluations");
 
 Router.use('/getAll', function (req, res) {
 
@@ -31,6 +33,18 @@ Router.use('/updateCourse', function (req, res) {
 
     updateCourse(cid, tid, ctype, cintroduce, cproperty, function (result, err) {
         res.send({result: result.status})
+    })
+});
+Router.use('/evaluationCourse', function (req, res) {
+
+    evaluationCourse(req.body, function (result, err) {
+        res.send({result: result.status})
+    })
+});
+Router.use('/getCourseEvaluations', function (req, res) {
+
+    getCourseEvaluations(req.body, function (result, err) {
+        res.send({result: result.results, status: result.status})
     })
 });
 

@@ -8,7 +8,7 @@ module.exports = function (data, callback) {
         if (err) {
             console.log("错误");
             callback({status: 0});
-            throw err;
+            // throw err;
         } else {
             callback({status: 1});
         }

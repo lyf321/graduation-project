@@ -253,11 +253,15 @@
                 var col_1 = "";
                 if (status === "success") {
                     for (let i = 0; i < data.result.length; i++) {
-                        col_1 += '<div> ' +
-                                '<span></span><div class="name">' + data.result[i].cname + '</div>' +
-                                '<a href="./orderCourseDetails.html?id=' + data.result[i].cid + '"  id=' + data.result[i].cid + '>' +
-                                '<img src="../upload/book/2.jpg" style="width: 200px;height: 150px;"/> </a>' +
-                                '</div>'
+                       if(data.result[i].clock === 1 && data.result[i].cproperty === '0'){
+
+                       }else{
+                           col_1 += '<div> ' +
+                                   '<span></span><div class="name">' + data.result[i].cname+" - "+data.result[i].tname+ '</div>' +
+                                   '<a href="./orderCourseDetails.html?id=' + data.result[i].cid + '"  id=' + data.result[i].cid + '>' +
+                                   '<img src="../upload/book/2.jpg" style="width: 200px;height: 150px;"/> </a>' +
+                                   '</div>'
+                       }
                     }
                     document.getElementById("course_list").innerHTML = col_1;
                 }
@@ -328,6 +332,12 @@
                             class="fa fa-calendar"
                             aria-hidden="true"></i>  
                         <span style="color:white;"> 预约课程 </span></a>
+                </li>
+                <li>
+                    <a class="#" href="./finishCourse.html" data-toggle="collapse" data-target="#submenu-1"><i
+                            class="fa fa-calendar"
+                            aria-hidden="true"></i>  
+                        <span style="color:white;"> 已结束课程 </span></a>
                 </li>
                 <li>
                     <a class="#" href="./setting.html" data-toggle="collapse" data-target="#submenu-1"><i

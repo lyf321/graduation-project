@@ -222,7 +222,7 @@
                                 '<span class="glyphicon glyphicon-edit"></span> Edit</a> ' +
                                 '<a class="btn btn-danger btn-xs" onclick=deleteTeacher()>' +
                                 '<span class="glyphicon glyphicon-remove"></span> Del</a>&nbsp;' +
-                                '<a class="btn btn-danger btn-xs" onclick=attendance()>' +
+                                '<a href="attendance.html?tid='+data.result[i].tid+'" class="btn btn-danger btn-xs" onclick=attendance()>' +
                                 '<span class="glyphicon glyphicon-search"></span>考勤</a>'
                     }
                 }
@@ -239,8 +239,9 @@
     var taddress;
     var tnumber;
 
-    function attendance() {
-        window.location.href = "attendance.html"
+    function attendance(tids) {
+//        console.log(tids)
+//        window.location.href = "attendance.html?tid="+tid+""
     }
 
     function editTeacher() {
@@ -320,6 +321,7 @@
                         history.go(0)
                     } else {
                         alert("删除失败，老师还有课程没有结束！");
+                        history.go(0)
                     }
                 }
             });
